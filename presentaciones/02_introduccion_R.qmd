@@ -472,7 +472,6 @@ colMeans(calificaciones)
 ```
 
 
-
 ## `data.frames` o cuadros de datos
 
 - Un `data.frame` es un arreglo de vectores en filas y columnas de distintos tipos
