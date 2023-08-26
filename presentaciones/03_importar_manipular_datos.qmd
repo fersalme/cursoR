@@ -1,0 +1,156 @@
+---
+title: "Importar, manipular y exportar bases de datos en R"
+author: "Fernando Salcedo Mejía, ALZAK Foundation"
+date: 2023-08-19
+format: 
+  revealjs :
+    logo: "src/alzak_foundation.png"
+    footer: "Copyright (c) 2023, Fernando Salcedo"
+    scrollable: true
+execute:
+  echo: true
+---
+
+## Filosofía `tidy` para la manipulación de datos en `R` {background-color="#b2d8d8"}
+
+## Introducción 🥽
+
+-   Una parte fundamental en el análisis de datos es la manipulación de datos
+-   **Representa una gran parte** del tiempo de cualquier proceso de análisis de datos
+
+![](src/data_science_workflow.png)
+
+## Filosofía `tidy` 🔮 {.smaller}
+
+-   Hay tres reglas interrelacionadas que hacen que un conjunto de datos esté ordenado:
+
+::: incremental
+-   Cada variable es una columna.
+-   Cada observación es una fila.
+-   Cada valor es una celda.
+:::
+
+![](src/filosofia_tidy.png)
+
+## El `tidyverse` para ciencia de datos con `R` ✨
+
+-   `tidyverse` es una colección de paquetes `R` diseñados para la ciencia de datos.
+-   Todos los paquetes comparten la misma filosofía : análisis gramatical de bases de datos
+-   Usamos `install.packages("tidyverse")` y luego `library(tidyverse)` para usarlo.
+
+```{r}
+library(tidyverse)
+```
+
+## Importar datos a `R` {background-color="#b2d8d8"}
+
+## El paquete `readr`
+
+-   El paquete `readr` permite leer **archivos planos**
+-   También ajusta el formato adecuado para cargarlo en `R`
+
+::: callout-note
+# ¿Qué es un archivo plano?
+
+Es un tipo de archivo de almacenamiento de datos en **texto sin formato** usando una estructura tabular con filas y columnas. Usualmente se llaman `file.csv` o `file.txt` y son de tres tipos:
+
+-   Valores separados por comas
+-   Valores separados por punto y coma
+-   Valores separados por tabuladores
+:::
+
+## Importar un archivo datos con `readr`
+
+| Tipo de archivo                    | Comando        |
+|------------------------------------|----------------|
+| Valores separados por comas        | `read_csv()`   |
+| Valores separados por punto y coma | `read_csv2()`  |
+| Valores separados por tabuladores  | `read_delim()` |
+
+## Base de casos COVID-19 en Bolívar 🦠
+
+```{r}
+# importar un archivo delimitado por comas
+df_covid <- read_csv("../datos/casos_covid-19_bolivar.csv")
+
+# ver los datos en la consola
+glimpse(df_covid)
+
+```
+
+## Importar datos desde Excel con `readxl` {.smaller}
+
+-   El paquete `readxl` permite leer datos desde archivos de Excel
+-   Para instalarlo usamos `install.packages("readxl)` y `library(readxl)`
+
+| Uso                       | Comando                            |
+|---------------------------|------------------------------------|
+| Número de hojas y nombres | `excel_sheets(path = "file.xlsx")` |
+| Leer datos de una hoja    | `read_excel(path = "file.xlsx", sheet = "hoja1")` |
+
+::: callout-note
+Si el archivo de Excel solo contiene una sola hoja con datos, no es necesario usar la opción `sheet`
+:::
+
+## Base de casos COVID-19 en Bolívar desde Excel 📄
+
+```{r}
+# cargar la libreria
+library(readxl)
+
+# nombres hojas
+excel_sheets(path = "../datos/casos_covid-19_bolivar.xlsx")
+
+# importar los datos
+df_covid <- read_excel(path = "../datos/casos_covid-19_bolivar.xlsx", # archivo de Excel
+                       sheet = "Sheet1" ) # hoja con los datos
+
+# ver los datos en la consola
+glimpse(df_covid)
+
+```
+
+## El paquete utilitario `janitor` 🧹
+
+- `janitor` es un paquete utilitario que tienen comandos para rutinas que hacemos regularmente 
+- La más empleada es crear nombres de variables consistentes con la filosofía `tidy` con el comando `clean_names()`
+- Para instalarlo `install.packages("janitor")`
+
+```{r}
+# cargamos la libreria
+library(janitor)
+
+# nombres de la variables
+names(df_covid)
+
+# limpiamos los nombres de la base covid
+df_covid <- clean_names(df_covid)
+names(df_covid)
+```
+
+
+## Resumen y transformación de datos con `dplyr` {background-color="#b2d8d8"}
+
+## El paquete `dplyr` : la herramienta principal 🛠
+
+- El paquete `dplyr` permite manipular de forma **gramatical o con verbos** una base de datos
+- Los verbos de `dplyr` se pueden encadenar a través de un pipe `%>%` incrementando la versatilidad y rapidez
+- Los verbos más comunes a usar son :
+
+
+
+
+  - `mutate()` : agrega nuevas variables o modifican las existentes a partir de funciones
+  - `select()` : selecciona variables a partir de su nombre
+  - `filter()` : segmenta las filas que cumplen condiciones
+  - `summarise()` : resumen variables en valores únicos
+  - `arrange()` : cambia el orden de las filas
+  - `group_by()` : permite hacer operaciones por grupos
+- El paquete `tidyr` brinda comandos útiles que permiten transformar las bases de datos (transponer, separa, etc)
+- Los verbos más usados son :
+  - `pivot_wider()` : transforma una base de formato largo a formato ancho
+  - `pivot_longer()` : transforma una base de formato ancho a largo
+  - `separate()` : separa en dos columnas valores de texto por un separador
+- Normalmente ambos se usan en conjunto `dplyr` + `tidyr` = `r ji("love")`
+
+
