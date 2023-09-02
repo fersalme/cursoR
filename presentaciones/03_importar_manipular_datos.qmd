@@ -532,7 +532,7 @@ save(df_casos_mes_wide, df_casos_muertes_mun,
 ```
 
 
-## Prueba lo que has aprendido 🧠
+## Prueba lo que has aprendido 1. 🧠
 
 - Importa la base `base_medicamentos.csv` a `R`
 - Limpia los nombres usando `janitor`
@@ -543,5 +543,10 @@ save(df_casos_mes_wide, df_casos_muertes_mun,
 - Exporta a un archivo plano delimitado por comas el resultado anterior. Use el nombre `dispensacion_cardiovascular.csv`.
 - Exportar a Excel el los mismos datos, pero cada año debe estar en una sola hoja. Use el nombre `dispensacion_cardiovascular.xlsx`.
 
+## Prueba lo que has aprendido 2. 🧠
 
-
+- Usando los reportes de proyección de población del DANE entre 1985 a 2035 que está en formato `.xlsx` realice :
+- Importa las distintas bases de datos de población a `R`
+- Limpia los nombres usando `janitor`
+- Cree una base de datos única formato `tidy` a lo largo donde solo estén las variables : `codigo_dpto, nombre_dpto, codigo_muncipio, nombre_municipio, año, edad, sexo, poblacion`
+- Exporta a un archivo plano delimitado por comas el resultado anterior. Use el nombre `proyeccion_poblacion_1985_2035.csv`.
