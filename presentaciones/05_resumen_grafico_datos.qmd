@@ -1,0 +1,152 @@
+---
+title: "Resumen gráfico de datos en R"
+author: "Fernando Salcedo Mejía, ALZAK Foundation"
+date: 2023-08-19
+format: 
+  revealjs :
+    logo: "src/alzak_foundation.png"
+    footer: "Copyright (c) 2023, Fernando Salcedo"
+    scrollable: true
+execute:
+  echo: true
+---
+
+## Introducción 🥽
+
+- Los gráficos permiten resumir datos de forma visual.
+- Su objetivo siempre es representar patrones o comportamientos.
+
+![Mapa de Charles Minard (1869) que muestra el movimiento, las pérdidas humanas y la temperatura ambiental durante la campaña de Napoleón contra Rusia en 1812.](https://upload.wikimedia.org/wikipedia/commons/2/29/Minard.png)
+
+## Paquetes usados para gráficar en `R`
+
+- Durante el material usaremos comandos de `r-base` para gráfica rápidamente.
+- Por otra parte, `ggplot2` es el paquete de `R` más usado para hacer gráficos 
+
+# Cargar datos
+
+- Usaremos una base de dispensación de medicamentos.
+
+```{r}
+# Cargamos los datos de ejemplo
+library(tidyverse)
+df_med <- read_csv2("../datos/base_medicamentos.csv")
+
+# Limpiar nombres
+df_med <- janitor::clean_names(df_med)
+# encabezado
+glimpse(df_med)
+
+```
+
+## Gráficos exploratorios con `R-base` {background-color="#b2d8d8"}
+
+## Histograma
+
+- Los histogramas muestran la distribución de una variable continua dividiendo sus valores en rangos y representando la frecuencia de valores que están en esos rangos.
+
+```{r}
+# r-base
+hist(df_med$precio, 
+     xlab = "Precio medicamentos", 
+     ylab = "Frecuencia", 
+     main = "Histrograma precio")
+
+```
+
+## Densidad
+
+- Un gráfico de densidad técnicamente es la estimación de la función de densidad de probabilidad de una variable aleatoria. 
+- Los diagramas de densidad pueden ser una forma efectiva de ver la distribución de una variable continua. 
+
+```{r}
+# r-base
+# Densidad de una variable continua 
+plot(density(df_med$precio), #vector o variable
+     xlab = "Precio medicamentos", 
+     ylab = "Frecuencia", 
+     main = "Histrograma precios")
+
+```
+
+## Caja y bigotes
+
+- Describe una variable continua en cinco estadísticos de resumen : mínimo, primer cuartil (25%), mediana (50%), tercer cuartil (75%) y máximo
+- También permite identificar valore extremos
+
+```{r}
+# una variable
+boxplot(df_med$costo_total)
+
+# una variable sin datos atipicos
+boxplot(df_med$costo_total, outline = FALSE)
+
+# dos o más variables categóricas o factor
+boxplot(costo_total ~ pbs, data = df_med, outline = FALSE)
+
+
+```
+
+- Gráficos de barras (simples y apiladas)
+
+- Las gráficas de barras representan un volumen o cantidad de un atributo. 
+- Por ejemplo, número de dispensaciones realizadas o promedio del costo de un medicamento por mes.
+- Son el tipo de gráfico más usados.
+
+```{r}
+# simple
+barplot(table(df_med$pbs), 
+        xlab = "PBS",
+        ylab = "Frecuencia", 
+        main = "Dispensaciones por plan de beneficios")
+
+# mas de un grupo no apilado
+tab <- table(df_med$tipo_entrega, df_med$pbs)
+barplot(tab, 
+        beside = TRUE,
+        legend.text = rownames(tab),
+        args.legend = list(x = "topleft"),
+        xlab = "PBS",
+        ylab = "Frecuencia", 
+        main = "Dispensaciones por plan de beneficios")
+
+# mas de un grupo apilado
+barplot(tab,
+        legend.text = rownames(tab),
+        args.legend = list(x = "topleft"),
+        xlab = "PBS",
+        ylab = "Frecuencia", 
+        main = "Dispensaciones por plan de beneficios")
+
+# mas de un grupo apilado 100%
+barplot(prop.table(tab, 2)*100,
+        legend.text = rownames(tab),
+        args.legend = list(x = "topleft"),
+        xlab = "PBS",
+        ylab = "Frecuencia", 
+        main = "Dispensaciones por plan de beneficios")
+
+```
+
+## Gráficos con `ggplot2` {background-color="#b2d8d8"}
+
+## Principio de `ggplot2`
+
+- La filosofía de `ggplot2` es una agregación de capas de características para crear el gráfico
+
+![](src/ggplot_concepto.png){width=50%}
+
+## Esquema de cómo funciona `ggplot()`
+
+![Kieran Healy. Data Visualization A practical introduction. 
+](src/ch-03-ggplot-flow-vertical.png){width=50%}
+
+## Gráfico de barras `geom_col()` y `geom_bar()`
+
+- Lo usamos para representar volúmenes o cantidad
+
+```{r}
+
+
+```
+

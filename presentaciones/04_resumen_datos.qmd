@@ -1,0 +1,230 @@
+---
+title: "Resumen estadístico de datos en R"
+author: "Fernando Salcedo Mejía, ALZAK Foundation"
+date: 2023-08-19
+format: 
+  revealjs :
+    logo: "src/alzak_foundation.png"
+    footer: "Copyright (c) 2023, Fernando Salcedo"
+    scrollable: true
+execute:
+  echo: true
+---
+
+## Introducción 🥽
+
+- El resumen estadístico de los datos es fundamental para entender su comportamiento
+- `R` es perfecto para esta tarea, ya que está repleto de funciones para resumir datos
+- Nos enfocaremos en lo que se conoce como **estadística descriptiva**
+
+## La estadística descriptiva
+
+::: callout-note
+Es la técnica matemática que **obtiene, organiza, presenta y describe** un conjunto de datos con el propósito de facilitar el uso, generalmente con el apoyo de tablas, medidas numéricas o gráficas.
+
+[Wikipedia](https://es.wikipedia.org/wiki/Estad%C3%ADstica_descriptiva)
+:::
+
+# Tipos de variables 
+
+- Existe dos grupos grandes de variables :
+
+::: incremental
+- Categórica : Sexo, color de ojos, etc
+- Numérica : edad, ingresos, temperatura, etc
+:::
+
+# Estadisitico de resumen de variables 
+
+- Según el tipo de variable se resume así :
+
+::: incremental
+- Categórica : tablas de frecuencias
+- Numérica : promedio, mediana, quartiles, etc
+:::
+
+# Cargar datos
+
+- Usaremos una base de dispensación de medicamentos.
+
+```{r}
+# Cargamos los datos de ejemplo
+library(tidyverse)
+df_med <- read_csv2("../datos/base_medicamentos.csv")
+
+# Limpiar nombres
+df_med <- janitor::clean_names(df_med)
+# encabezado
+glimpse(df_med)
+
+```
+
+# Tablas de frecuencia absoluta
+
+- El comando `table()` permite resumir una variable **categórica** en frecuencias absolutas.
+- Las frecuencias absolutas no es más que el recuento de veces que aparece un valor dentro de una variable.
+
+```{r}
+# tabla de frecuencia
+table(df_med$tipo_entrega)
+
+# tabla de frecuencia ordenada
+sort(table(df_med$tipo_entrega))
+
+# tabla de frecuencia incluyendo valores NA
+table(df_med$tipo_entrega, exclude = NULL)
+
+```
+
+# Tablas de frecuencia relativa
+
+- Usamos el comando `prop.table()` para calcular las frecuencias relativas o porcentajes de una categoría dentro de una variable.
+
+```{r}
+# proprocion de tipo de entrega sobre el total
+prop.table(table(df_med$tipo_entrega))
+
+# en terminos porcentuales
+prop.table(table(df_med$tipo_entrega)) * 100
+
+```
+
+# Tabla de frecuencia cruzada
+
+- Tabla de frecuencia donde se reportan las frecuencias conjuntas de dos variables.
+
+```{r}
+# tipo de entega (filas) y pbs (columnas)
+table(df_med$tipo_entrega, df_med$pbs)
+
+# si queremos ver el nombre de cada variables
+with(df_med, table(tipo_entrega, pbs))
+
+# agregar el total fila y columna
+addmargins(with(df_med, table(tipo_entrega, pbs)))
+
+```
+
+# Tabla de frecuencia cruzada relativa
+
+- En este caso, la tabla de frecuencia relativa se calcula respecto a : 
+- Total fila `prop.table(tab, margin = 1)`
+- Total columna `prop.table(tab, margin = 2)`
+- Total general (valor predeterminado) `prop.table(tab, margin = 3)`
+
+```{r}
+# porcentaje de medicamentos por pbs según tipo de entrega
+tab <- with(df_med, table(tipo_entrega, pbs))
+prop.table(tab, margin = 1) * 100
+
+# porcentaje de medicamentos por tipo de entrega según pbs
+prop.table(tab, margin = 2) * 100
+
+# porcentaje de medicamentos pbs y tipo de entrega
+prop.table(tab) * 100
+
+```
+
+## Veamos lo que has aprendido 🧠
+
+- Crear una tabla cruzada entre `cronico` (filas) y `tipo_entrega` (columnas)
+- ¿Cuantos medicamentos fueron entregados a domicilios por tipo de severidad?
+- ¿Cuanto representó la entrega a domicilio de medicamentos respecto al total de entregas para eventos agudos?
+
+## Solución ✅
+
+```{r}
+tab <- with(df_med, table(cronico, tipo_entrega))
+tab
+prop.table(tab, 1)
+```
+
+## Resumen de una variable continua
+
+- Las variables continuas son las variables que solo numéricas que están comprendidas en un rango.
+
+- `summary()` : resumen estadístico de `r-base`
+- Las funciones de resumen estadístico típico con `R` son :
+ - `mean()` : calcula la media
+ - `sd()` : calcula la desviación estándar
+ - `var()` : calcula la varianza
+ - `min()` : valor mínimo
+ - `max()` : valor máximo
+ - `median()` : calcula la mediana
+ - `length()` : largo o número de valores
+ - `range()` : calcula el valor mínimo y máximo
+ - `quantile()` : calcula los percentiles de un vector numérico`
+ 
+::: callout-warning
+Las funciones de resumen estadístico son sensibles a los valores `NA` **devolviendo** `NA` si hay alguno presente. Use `na.rm = TRUE`
+:::
+
+## 
+
+```{r}
+# resumen de las variables
+vars_num <- sapply(df_med, class)
+summary(df_med[vars_num == "numeric"])
+
+# resumen de la media en todas las variables numéricas con dplyr
+df_med_media <- df_med %>% 
+  select(-id) %>% 
+  summarise(
+    across(where(is.numeric), list(mean = mean, sd = sd))
+  )
+
+df_med_media
+
+```
+
+## Estratificar resumen estadístico
+
+- Podemos realizar el resumen estadístico por grupos usando `by()`
+
+```{r}
+# resumen de las variables por grupos
+with(df_med, by(data = precio, INDICES =  pbs, FUN = summary))
+
+```
+
+
+## Categorizar una variable numérica
+
+- Debemos definir puntos de corte y contar los valores en cada cohorte.
+- Por ejemplo, precios por encima del promedio o usando cuartiles.
+
+```{r}
+# precio promedio
+mean_precio <- mean(df_med$precio, na.rm = TRUE)
+# medicamentos por encima y debajo del promedio
+table(df_med$precio > mean_precio)
+
+# usando cuartiles
+cuartil_precio <- quantile(df_med$precio, c(0, 0.25, 0.5, 0.75, 1))
+cuartil_precio
+q_precio <- cut(df_med$precio, breaks = cuartil_precio,
+                include.lowest = TRUE, right = FALSE)
+table(q_precio)
+
+```
+
+## Veamos lo que has aprendido 🧠
+
+- ¿Cúal es el costo promedio, minimo y máximo por familia de medicamentos?
+
+## Solución ✅
+
+```{r}
+# R base
+with(df_med, by(costo_total, familia, summary))
+
+# usando dplyr
+df_med %>% 
+  group_by(familia) %>% 
+  summarise(
+    promedio = mean(costo_total, na.rm = TRUE),
+    min = min(costo_total, na.rm = TRUE),
+    max = max(costo_total, na.rm = TRUE)
+  )
+```
+
