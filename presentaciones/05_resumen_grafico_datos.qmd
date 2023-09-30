@@ -7,9 +7,15 @@ format:
     logo: "src/alzak_foundation.png"
     footer: "Copyright (c) 2023, Fernando Salcedo"
     scrollable: true
+    margin: 0
 execute:
   echo: true
+enbeded: true
 ---
+
+```{r setup, include=FALSE}
+knitr::knit_hooks$set(crop = knitr::hook_pdfcrop)
+```
 
 ## Introducción 🥽
 
@@ -34,6 +40,7 @@ df_med <- read_csv2("../datos/base_medicamentos.csv")
 
 # Limpiar nombres
 df_med <- janitor::clean_names(df_med)
+
 # encabezado
 glimpse(df_med)
 
@@ -54,7 +61,7 @@ hist(df_med$precio,
 
 ```
 
-## Densidad
+### Densidad
 
 - Un gráfico de densidad técnicamente es la estimación de la función de densidad de probabilidad de una variable aleatoria. 
 - Los diagramas de densidad pueden ser una forma efectiva de ver la distribución de una variable continua. 
@@ -69,7 +76,8 @@ plot(density(df_med$precio), #vector o variable
 
 ```
 
-## Caja y bigotes
+
+### Caja y bigotes
 
 - Describe una variable continua en cinco estadísticos de resumen : mínimo, primer cuartil (25%), mediana (50%), tercer cuartil (75%) y máximo
 - También permite identificar valore extremos
@@ -86,9 +94,9 @@ boxplot(costo_total ~ pbs, data = df_med, outline = FALSE)
 
 
 ```
+### Gráficos de barras
 
 - Gráficos de barras (simples y apiladas)
-
 - Las gráficas de barras representan un volumen o cantidad de un atributo. 
 - Por ejemplo, número de dispensaciones realizadas o promedio del costo de un medicamento por mes.
 - Son el tipo de gráfico más usados.
@@ -144,9 +152,219 @@ barplot(prop.table(tab, 2)*100,
 ## Gráfico de barras `geom_col()` y `geom_bar()`
 
 - Lo usamos para representar volúmenes o cantidad
+- Realicemos un gráfico con `geom_bar()` siguiendo el esquema paso a paso de cómo funciona `ggplot()`, 
+
+## 1. Tidy data
 
 ```{r}
+# Dar formato a las fechas
+df_med <- df_med %>% 
+  mutate(
+    fecha_entrega = dmy(fecha_entrega)
+  )
 
+# encabezado
+glimpse(df_med)
+```
+
+## 2. Mapping
+
+```{r}
+library(ggplot2)
+
+p <- ggplot(data = df_med, mapping = aes(x = pbs))
+
+p
+```
+
+## 3. Geom
+
+```{r}
+p <- p + geom_bar()
+p
+```
+
+## 4. Labels & Guides
+
+```{r}
+p <- p + labs(x = "PBS",
+       y = "Frecuencia",
+       title = "Dispensaciones por plan de beneficios") + 
+  theme_bw()
+p
+```
+
+## Uniendo todos los pasos
+
+```{r}
+#| output-location: column
+#| echo: true
+#| crop: true
+p <- p + geom_bar() +
+  coord_cartesian() +
+  labs(x = "PBS",
+       y = "Frecuencia",
+       title = "Dispensaciones por plan de beneficios") +
+  theme_bw()
+p
+```
+
+
+```{css, echo=FALSE}
+.reveal .map img {
+  height: 80vh;
+  width: auto !important;
+  padding-left: 2em;
+}
+```
+
+## Agregar colores y etiquetas en `geom_bar()`
+
+```{r}
+#| output-location: column
+#| echo: true
+#| crop: true
+
+# Agregar colores y etiquetas 
+ggplot(data = df_med, mapping = aes(x = pbs)) +
+  # Agregar colores
+  geom_bar() +
+  # Agregar etiquetas 
+  geom_text(aes(label = ..count..), stat = "count", vjust = 0)  +
+  scale_fill_manual(values = c("tomato", "skyblue")) +
+  labs(x = "PBS",
+         y = "Frecuencia",
+         title = "Dispensaciones por plan de beneficios") +
+  theme_bw()
+  
 
 ```
 
+## Usando `fill` para agregar grupos en `geom_bar()`
+
+```{r}
+#| output-location: column
+#| echo: true
+#| crop: true
+
+# mas de un grupo no apilado
+ggplot(
+  data = na.omit(df_med),
+  mapping = aes(x = pbs,
+                fill = tipo_entrega,
+                group = tipo_entrega)
+) +
+  geom_bar(position = "dodge") +
+  geom_text(aes(label = ..count..,  group = tipo_entrega),
+            stat = "count",
+            position = position_dodge(0.9),
+            vjust = 0)  +
+  scale_fill_manual(values = c("#54504F", "#5DC3DA")) +
+  labs(x = "PBS",
+       y = "Frecuencia",
+       title = "Dispensaciones por plan de beneficios",
+       fill = "Tipo de entrega") +
+  theme_bw()
+
+```
+
+## Apilar los grupos dentro de cada barra con `geom_bar()`
+
+```{r}
+#| output-location: column
+#| echo: true
+#| crop: true
+
+# mas de un grupo apilado 
+ggplot(data = na.omit(df_med),
+       mapping = aes(x = pbs, fill = tipo_entrega)) +
+  geom_bar() +
+  scale_fill_manual(values = c("#54504F", "#5DC3DA")) +
+  labs(x = "PBS",
+       y = "Frecuencia",
+       title = "Dispensaciones por plan de beneficios",
+       fill = "Tipo de entrega") +
+  theme_bw()
+
+```
+
+## Apilar los grupos al 100% con `geom_bar()`
+
+```{r}
+#| output-location: column
+#| echo: true
+#| crop: true
+
+# mas de un grupo apilado 100%
+ggplot(data = na.omit(df_med), mapping = aes(x = pbs, fill = tipo_entrega)) +
+  geom_bar(position = "fill") +
+  geom_text(aes(label = scales::percent(..count.. / sum(..count..))), 
+            stat = "count", 
+            position = position_fill(vjust = 0.5)) +
+  scale_fill_manual(values = c("#54504F", "#5DC3DA")) +
+  labs(x = "PBS",
+       y = "Frecuencia",
+       title = "Dispensaciones por plan de beneficios", 
+       fill = "Tipo de entrega") + 
+  theme_bw()
+ 
+```
+
+## Usando `facets` para estratificar gráficos
+
+```{r}
+#| output-location: column
+#| echo: true
+#| crop: true
+
+ggplot(data = na.omit(df_med),
+       mapping = aes(x = pbs, fill = tipo_entrega)) +
+  geom_bar(position = "fill") +
+  geom_text(aes(label = scales::percent(..count.. / sum(..count..))),
+            stat = "count",
+            position = position_fill(vjust = 0.5)) +
+  scale_fill_manual(values = c("#54504F", "#5DC3DA")) +
+  labs(x = "PBS",
+       y = "Frecuencia",
+       title = "Dispensaciones por plan de beneficios",
+       fill = "Tipo de entrega") +
+  theme_bw() +
+  facet_wrap( ~ cronico)
+
+```
+
+## Gráfico de linea usando `geom_line()` y `geom_point()`
+
+- Un gráfico de línea se usa para mostrar evolución o cambio
+- Vamos a crear un gráfico de líneas de las dispensaciones por mes
+
+```{r}
+
+# creamos las variables
+df_disp <- df_med %>% 
+  mutate(
+    mes_disp = floor_date(fecha_entrega, "month")
+  ) %>% 
+  count(mes_disp)
+
+df_disp
+
+```
+
+## Gráfico de linea usando `geom_line()` y `geom_point()`
+
+```{r}
+
+ggplot(df_disp, aes(x = mes_disp, y = n)) +
+  geom_line() +
+  geom_point() +
+  geom_text(aes(label = n, y = n + 100), vjust = 0, nudge_y = 0.5) +
+  scale_x_date(date_breaks = "months", date_labels = "%m/%Y") +
+  labs(
+    x = "Mes de dispensación",
+    y = "Cantidad"
+  ) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90))
+
+```
