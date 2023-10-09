@@ -1,14 +1,16 @@
 ---
 title: "Resumen gráfico de datos en R"
-author: "Fernando Salcedo Mejía, ALZAK Foundation"
+author: "Faiber Chaparro, ALZAK Foundation"
 date: 2023-08-19
 format: 
   revealjs :
     logo: "src/alzak_foundation.png"
     footer: "Copyright (c) 2023, Fernando Salcedo"
     scrollable: true
+    margin: 0
 execute:
   echo: true
+enbeded: true
 ---
 
 ## Introducción 🥽
@@ -34,6 +36,11 @@ df_med <- read_csv2("../datos/base_medicamentos.csv")
 
 # Limpiar nombres
 df_med <- janitor::clean_names(df_med)
+
+# usamos datos completos
+df_med <- df_med %>% 
+  drop_na()
+
 # encabezado
 glimpse(df_med)
 
@@ -46,7 +53,8 @@ glimpse(df_med)
 - Los histogramas muestran la distribución de una variable continua dividiendo sus valores en rangos y representando la frecuencia de valores que están en esos rangos.
 
 ```{r}
-# r-base
+#| echo: true
+#| output-location: slide
 hist(df_med$precio, 
      xlab = "Precio medicamentos", 
      ylab = "Frecuencia", 
@@ -60,8 +68,9 @@ hist(df_med$precio,
 - Los diagramas de densidad pueden ser una forma efectiva de ver la distribución de una variable continua. 
 
 ```{r}
-# r-base
-# Densidad de una variable continua 
+#| echo: true
+#| output-location: slide
+
 plot(density(df_med$precio), #vector o variable
      xlab = "Precio medicamentos", 
      ylab = "Frecuencia", 
@@ -75,6 +84,7 @@ plot(density(df_med$precio), #vector o variable
 - También permite identificar valore extremos
 
 ```{r}
+
 # una variable
 boxplot(df_med$costo_total)
 
@@ -84,11 +94,11 @@ boxplot(df_med$costo_total, outline = FALSE)
 # dos o más variables categóricas o factor
 boxplot(costo_total ~ pbs, data = df_med, outline = FALSE)
 
-
 ```
 
-- Gráficos de barras (simples y apiladas)
+## Gráficos de barras simple
 
+- Gráficos de barras (simples y apiladas)
 - Las gráficas de barras representan un volumen o cantidad de un atributo. 
 - Por ejemplo, número de dispensaciones realizadas o promedio del costo de un medicamento por mes.
 - Son el tipo de gráfico más usados.
@@ -137,16 +147,268 @@ barplot(prop.table(tab, 2)*100,
 ![](src/ggplot_concepto.png){width=50%}
 
 ## Esquema de cómo funciona `ggplot()`
-
+  
 ![Kieran Healy. Data Visualization A practical introduction. 
 ](src/ch-03-ggplot-flow-vertical.png){width=50%}
+
 
 ## Gráfico de barras `geom_col()` y `geom_bar()`
 
 - Lo usamos para representar volúmenes o cantidad
+- Realicemos un gráfico con `geom_bar()` siguiendo el esquema paso a paso de cómo funciona `ggplot()`, 
+
+```{r}
+#| echo: true
+#| output-location: slide
+
+# libreria ggplor2 hace parte de tidyverse
+library(ggplot2)
+
+ggplot(data = df_med, mapping = aes(x = pbs)) + # Paso 1 : Define tus variables (mapping)
+  geom_bar() + # Paso 2 : Define el tipo de gráfico (geom)
+  labs(x = "PBS", # Paso 3 : Define etiquetas para ejes y titulos
+       y = "Frecuencia",
+       title = "Dispensaciones de medicamentos por plan de beneficios") +
+  theme_minimal() # Paso 4 opcional : definir un tema
+
+```
+
+## Usando `fill` para agregar grupos en `geom_bar()`
+
+- Usamos la opción `fill` para señalar usando colores grupos en el gráficos de barras.
+
+```{r}
+#| echo: true
+#| output-location: slide
+
+ggplot(df_med, aes(x = pbs, fill = tipo_entrega)) + # Usamos fill para agregar grupos
+  geom_bar() +
+  labs(x = "PBS",
+       y = "Frecuencia",
+       title = "Dispensaciones medicamentos por plan de beneficios",
+       fill = "Tipo de entrega") +
+  theme_bw()
+
+```
+
+## Usando `fill` para grupos no apilados en `geom_bar()`
+
+- Usando la opción `dodge` en `geom_bar()`
+
+```{r}
+#| echo: true
+#| output-location: slide
+
+# mas de un grupo apilado 
+ggplot(data = na.omit(df_med),
+       mapping = aes(x = pbs, fill = tipo_entrega)) +
+  geom_bar(position = "dodge") +
+  labs(x = "PBS",
+       y = "Frecuencia",
+       title = "Dispensaciones por plan de beneficios",
+       fill = "Tipo de entrega") +
+  theme_bw()
+
+```
+
+## Apilar los grupos al 100% con `geom_bar()`
+
+- Para ello, usamos la opción `fill` dentro de `geom_bar()`
+
+```{r}
+#| echo: true
+#| output-location: slide
+
+# mas de un grupo apilado 100%
+ggplot(df_med, aes(x = pbs, fill = tipo_entrega)) +
+  geom_bar(position = "fill") +
+  labs(x = "PBS",
+       y = "Frecuencia",
+       title = "Dispensaciones por plan de beneficios", 
+       fill = "Tipo de entrega") + 
+  theme_bw()
+ 
+```
+
+## Etiquetas de datos con `geom_text()`
+
+- `geom_text()` permite agregar etiquetas de datos a las gráficas
 
 ```{r}
 
+# definir los datos y las graficar 
+ggplot(data = df_med, mapping = aes(x = pbs)) +
+  geom_bar() +
+  # Agregar etiquetas 
+  geom_text(aes(label = after_stat(count)), stat = "count", vjust = 0)  +
+  labs(x = "PBS",
+         y = "Frecuencia",
+         title = "Dispensaciones por plan de beneficios") +
+  theme_bw()
 
 ```
+
+- Agregar etiquetas por grupos
+
+```{r}
+
+# mas de un grupo no apilado
+
+ggplot(
+  data = df_med,
+  mapping = aes(x = pbs,
+                fill = tipo_entrega)) +
+  geom_bar(position = "dodge") +
+  geom_text(aes(label = after_stat(count)),
+            stat = "count",
+            position = position_dodge(0.9),
+            vjust = 0)  +
+  labs(x = "PBS",
+       y = "Frecuencia",
+       title = "Dispensaciones por plan de beneficios",
+       fill = "Tipo de entrega") +
+  theme_bw()
+```
+
+- Agregar etiquetas por grupos apilados al 100%
+
+
+```{r}
+
+# mas de un grupo apilado 100%
+ggplot(df_med, aes(x = pbs, fill = tipo_entrega)) +
+  geom_bar(position = "fill") +
+  geom_text(
+    aes(
+      # etiqueta de datos en formato porcentual
+      label = scales::percent(after_stat(count)/sum(after_stat(count)))
+      ),
+    stat = "count", 
+    # posición de la etiqueta en el centro de cada grupo
+    position = position_fill(vjust = 0.5)) +
+  labs(x = "PBS",
+       y = "Frecuencia",
+       title = "Dispensaciones por plan de beneficios", 
+       fill = "Tipo de entrega") + 
+  theme_bw()
+ 
+```
+
+## Personalizar colores en `fill`
+
+- Podemos personalizar los colores de los grupos usando `scales_fill_manula()`
+- Los colores en R tienen nombres clave como `red` o `blue`
+- También podemos usar códigos de colores como `#5DC3DA`
+
+```{r}
+#| echo: true
+#| output-location: slide
+
+ggplot(df_med, aes(x = pbs, fill = tipo_entrega)) +
+  geom_bar(position = "fill") +
+  geom_text(aes(label = scales::percent(after_stat(count)/sum(after_stat(count)))),
+    stat = "count", 
+    position = position_fill(vjust = 0.5)) +
+  # colores de los grupos 
+  scale_fill_manual(values = c("darkgreen", "#5DC3DA")) +
+  labs(x = "PBS",
+       y = "Frecuencia",
+       title = "Dispensaciones por plan de beneficios", 
+       fill = "Tipo de entrega") + 
+  theme_bw()
+ 
+```
+
+## Usando `facets` para estratificar gráficos
+
+- El comando `facet_wrap()` permite crear mini gráficos por grupos en un solo gráfico
+- El comando `facet_grid()` permite crear una matriz de gráficos
+
+```{r}
+#| echo: true
+#| output-location: slide
+
+ggplot(data = df_med,
+       mapping = aes(x = pbs, fill = tipo_entrega)) +
+  geom_bar(position = "fill") +
+  geom_text(aes(label = scales::percent(after_stat(count)/sum(after_stat(count)), accuracy = 0.1)),
+            stat = "count",
+            position = position_fill(vjust = 0.5)) +
+  scale_fill_manual(values = c("#54504F", "#5DC3DA")) +
+  labs(x = "PBS",
+       y = "Frecuencia",
+       title = "Dispensaciones por plan de beneficios",
+       fill = "Tipo de entrega") +
+  theme_bw() +
+  # dividir el gráfico por grupos
+  facet_wrap(~cronico)
+
+```
+
+
+## Gráfico de linea usando `geom_line()` y `geom_point()`
+
+- Un gráfico de línea se usa para mostrar evolución o cambio
+- Vamos a crear un gráfico de líneas de las dispensaciones por mes
+- Usamos `geom_line()` combinado con `geom_point()` para hacer gráficos de líneas
+
+```{r}
+#| echo: true
+#| output-location: slide
+
+# creamos las variables
+df_disp <- df_med %>% 
+  mutate(
+    fecha_entrega = dmy(fecha_entrega),
+    mes_disp = floor_date(fecha_entrega, "month")
+  ) %>% 
+  count(mes_disp)
+
+ggplot(df_disp, aes(x = mes_disp, y = n)) +
+  geom_line(color = "tomato") +
+  geom_point(color = "tomato") +
+  geom_text(aes(label = n, y = n + 5), vjust = 0, nudge_y = 0.5) +
+  scale_x_date(date_breaks = "months", date_labels = "%m/%Y") +
+  labs(
+    x = "Mes de dispensación",
+    y = "Cantidad"
+  ) +
+  theme_bw()
+
+```
+
+
+## Gráfico de linea usando `geom_line()`,  `geom_point()` y `facet_wrap()`
+
+- Usando  `facet_wrap()` podemos crear mini gráficos de líneas
+
+```{r}
+#| echo: true
+#| output-location: slide
+
+# creamos las variables
+df_disp <- df_med %>% 
+  mutate(
+    fecha_entrega = dmy(fecha_entrega),
+    mes_disp = floor_date(fecha_entrega, "month")
+  ) %>% 
+  filter(departamento != "0") %>% 
+  count(departamento, mes_disp)
+
+ggplot(df_disp, aes(x = mes_disp, y = n)) +
+  geom_line(color = "tomato") +
+  geom_point(color = "tomato") +
+  geom_text(aes(label = n, y = n), vjust = 0, nudge_y = 0.5) +
+  scale_x_date(date_breaks = "months", date_labels = "%m/%Y") +
+  labs(
+    x = "Mes de dispensación",
+    y = "Cantidad"
+  ) +
+  facet_wrap(~departamento, scales = "free_y") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90))
+
+```
+
+
 

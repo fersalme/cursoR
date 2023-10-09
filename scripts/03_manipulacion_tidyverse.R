@@ -8,7 +8,7 @@
 # ----------------------------------------------------
 
 # limpiar entorno
-rm(list = ls())
+rm(list = ls()); invisible(gc())
 
 
 # Importar datos con readr ------------------------------------------------
