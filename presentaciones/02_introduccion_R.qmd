@@ -7,8 +7,10 @@ format:
     logo: "src/alzak_foundation.png"
     footer: "Copyright (c) 2023, Fernando Salcedo"
     scrollable: true
+    margin: 0
 execute:
   echo: true
+enbeded: true
 ---
 
 ## Aritmética con `R`

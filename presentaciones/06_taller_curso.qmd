@@ -1,0 +1,47 @@
+---
+title: "Resumen gráfico de datos en R"
+author: "Fernando Salcedo, ALZAK Foundation"
+date: 2023-08-19
+format: 
+  revealjs :
+    logo: "src/alzak_foundation.png"
+    footer: "Copyright (c) 2023, Fernando Salcedo"
+    scrollable: true
+    margin: 0
+execute:
+  echo: true
+enbeded: true
+---
+
+## Preparativos 📝
+
+- Cree una carpeta con la estructura vista en el curso.
+- Ver **Crear un projecto de ciencia de datos con Rstudio** en `01_instalacion_R_Rstudio.html` para recordar lo visto.
+- Enviar la carpeta comprimida en formato `.zip` con la solución al correo del tutor.
+
+## Prueba lo que has aprendido 1 🧠
+
+- Cree un script con el nombre `01_tidy_poblacion.R` y desarrolle.
+- Usando los reportes de proyección de población del DANE entre 1985 a 2035 que está en formato `.xlsx` realice :
+- Importa las distintas bases de datos de población a `R`.
+- Limpia los nombres usando `janitor`.
+- Para cada base, trasponga los datos en formato `tidy` a lo largo donde estén las variables : `codigo_dpto, nombre_dpto, codigo_muncipio, nombre_municipio, año, edad, sexo, poblacion`.
+- Pegue verticalmente todas las bases de los distintos años usando `bind_rows()`.
+- Exporta a un archivo plano delimitado por comas el resultado anterior. Use el nombre `proyeccion_poblacion_1985_2035.csv`.
+- Guardar la base en formato `rds`. Use el nombre `proyeccion_poblacion_1985_2035.rds`.
+
+## Prueba lo que has aprendido 2 🧠
+
+- Cree un script con el nombre `02_analisis.R` y desarrolle.
+- Cargue los datos `proyeccion_poblacion_1985_2035.rds` usando `readRDS()`.
+- Calcule el aumento de la población total y el incremento porcentual de la población total entre 2018 y 2035.
+- Repita los cálculos del aumento e incremento de la población entre 2018 y 2035 para cada departamento.
+- Realice un gráfico de líneas de la población colombiana entre 1985 y 2035 usando `ggplot2`.
+- Repita el gráfico anterior pero discriminado por departamento usando `ggplot2`.
+
+## Ayuda 🚨🚨🚨
+
+- Todas las presentaciones y scripts desarrollados en el curso están disponibles en el repositorio.
+- Puedes contactar al tutor del curso si tiene dudas.
+
+

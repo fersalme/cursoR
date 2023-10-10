@@ -344,7 +344,78 @@ df_covid %>%
 ```
 
 
-## `dplyr` : Cruzar base de datos
+## `dplyr` : Unir dos bases de datos concepto
+
+- Usamos el comando `bind_rows(base_1, base_2)` permite agregar a las filas de la `base_2` a la `base_1`
+- También usando el comando `bind_cols(base_1, base_2)` agregamos las columnas de la `base_2` a la `base_1`
+
+::: callout-warning
+Solo puedo unir dos bases de datos que tengan **variables en común y que sean del mismo formato**
+:::
+
+## `dplyr` : Unir dos bases de datos ejemplo
+
+```{r}
+
+df_puntaje_mujeres <- data.frame(
+  id = 1:5,
+  sexo = rep("F", 5),
+  puntaje = sample(1:10, 5), # tomar 5 datos aleatorios entre 1 y 10
+  puntaje_anterior = sample(1:10, 5)
+)
+
+df_puntaje_hombres <- data.frame(
+  id = 6:10,
+  sexo = rep("M", 5),
+  puntaje = sample(1:10, 5)
+) 
+
+# ver datos
+df_puntaje_mujeres
+df_puntaje_hombres
+```
+
+## `dplyr` : Unir dos bases de datos `bind_rows()`
+
+- Observer que el resultado es una base de 10 filas uniendo verticalemente las variables
+- Note que hay valores perdidos en `puntaje_anterior` para las últimas 5 filas. La base `df_puntaje_hombres` no tenía esa variable.
+
+```{r}
+bind_rows(df_puntaje_mujeres, df_puntaje_hombres)
+```
+
+## `dplyr` : Unir dos bases de datos `bind_rows()`
+
+```{r}
+df_prueba_1 <- data.frame(
+  id = 1:5,
+  nombre = c("Pedro", "Juan", "María", "José", "Carmen"),
+  puntaje_1 = sample(1:10, 5)
+)
+
+df_prueba_2 <- data.frame(
+  id = 1:5,
+  nombre = c("Pedro", "Juan", "María", "José", "Carmen"),
+  puntaje_2 = sample(1:10, 5)
+) 
+
+# ver datos
+df_prueba_1
+df_prueba_2
+```
+
+## `dplyr` : Unir dos bases de datos `bind_rows()`
+
+::: callout-warning
+`bind_rows()` **NO** cruza los datos por un identificar (ver `joins`). Además, **debe evitar adicionar columnas con nombres repetidos en las dos bases**
+:::
+
+```{r}
+bind_cols(df_prueba_1, df_prueba_2[c("puntaje_2")])
+```
+
+
+## `dplyr` : Cruzar base de datos `joins`
 
 - `dplyr` cuenta con verbos para cruzar bases de datos
 - Supongamos que tenemos una base de datos `df_x` y una `df_y` que tienen un identificador en común: `id`
@@ -532,7 +603,7 @@ save(df_casos_mes_wide, df_casos_muertes_mun,
 ```
 
 
-## Prueba lo que has aprendido 1. 🧠
+## Prueba lo que has aprendido 🧠
 
 - Importa la base `base_medicamentos.csv` a `R`
 - Limpia los nombres usando `janitor`
@@ -542,11 +613,3 @@ save(df_casos_mes_wide, df_casos_muertes_mun,
 - Transponer los datos colocando los meses en las columnas y las filas los departamentos, municipios y años.
 - Exporta a un archivo plano delimitado por comas el resultado anterior. Use el nombre `dispensacion_cardiovascular.csv`.
 - Exportar a Excel el los mismos datos, pero cada año debe estar en una sola hoja. Use el nombre `dispensacion_cardiovascular.xlsx`.
-
-## Prueba lo que has aprendido 2. 🧠
-
-- Usando los reportes de proyección de población del DANE entre 1985 a 2035 que está en formato `.xlsx` realice :
-- Importa las distintas bases de datos de población a `R`
-- Limpia los nombres usando `janitor`
-- Cree una base de datos única formato `tidy` a lo largo donde solo estén las variables : `codigo_dpto, nombre_dpto, codigo_muncipio, nombre_municipio, año, edad, sexo, poblacion`
-- Exporta a un archivo plano delimitado por comas el resultado anterior. Use el nombre `proyeccion_poblacion_1985_2035.csv`.

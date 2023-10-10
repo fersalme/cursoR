@@ -9,7 +9,7 @@
 <link href="05_resumen_grafico_datos_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.2.269">
 
-  <meta name="author" content="Faiber Chaparro, ALZAK Foundation">
+  <meta name="author" content="Faiber Chaparro y Fernando Salcedo, ALZAK Foundation">
   <title>Resumen gráfico de datos en R</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -394,7 +394,7 @@
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Faiber Chaparro, ALZAK Foundation 
+Faiber Chaparro y Fernando Salcedo, ALZAK Foundation 
 </div>
 </div>
 </div>
@@ -729,11 +729,13 @@ $ tipo_entrega           &lt;chr&gt; "PRESENCIAL", "PRESENCIAL", "PRESENCIAL", "
 <span id="cb18-9"><a href="#cb18-9"></a>    <span class="at">stat =</span> <span class="st">"count"</span>, </span>
 <span id="cb18-10"><a href="#cb18-10"></a>    <span class="co"># posición de la etiqueta en el centro de cada grupo</span></span>
 <span id="cb18-11"><a href="#cb18-11"></a>    <span class="at">position =</span> <span class="fu">position_fill</span>(<span class="at">vjust =</span> <span class="fl">0.5</span>)) <span class="sc">+</span></span>
-<span id="cb18-12"><a href="#cb18-12"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"PBS"</span>,</span>
-<span id="cb18-13"><a href="#cb18-13"></a>       <span class="at">y =</span> <span class="st">"Frecuencia"</span>,</span>
-<span id="cb18-14"><a href="#cb18-14"></a>       <span class="at">title =</span> <span class="st">"Dispensaciones por plan de beneficios"</span>, </span>
-<span id="cb18-15"><a href="#cb18-15"></a>       <span class="at">fill =</span> <span class="st">"Tipo de entrega"</span>) <span class="sc">+</span> </span>
-<span id="cb18-16"><a href="#cb18-16"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-12"><a href="#cb18-12"></a>  <span class="co"># etiquetas en porcentaje del eje y</span></span>
+<span id="cb18-13"><a href="#cb18-13"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>percent) <span class="sc">+</span></span>
+<span id="cb18-14"><a href="#cb18-14"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"PBS"</span>,</span>
+<span id="cb18-15"><a href="#cb18-15"></a>       <span class="at">y =</span> <span class="st">"%"</span>,</span>
+<span id="cb18-16"><a href="#cb18-16"></a>       <span class="at">title =</span> <span class="st">"Dispensaciones por plan de beneficios"</span>, </span>
+<span id="cb18-17"><a href="#cb18-17"></a>       <span class="at">fill =</span> <span class="st">"Tipo de entrega"</span>) <span class="sc">+</span> </span>
+<span id="cb18-18"><a href="#cb18-18"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img data-src="05_resumen_grafico_datos_files/figure-revealjs/unnamed-chunk-12-1.png" width="960"></p>
 </div>
@@ -754,11 +756,12 @@ $ tipo_entrega           &lt;chr&gt; "PRESENCIAL", "PRESENCIAL", "PRESENCIAL", "
 <span id="cb19-5"><a href="#cb19-5"></a>    <span class="at">position =</span> <span class="fu">position_fill</span>(<span class="at">vjust =</span> <span class="fl">0.5</span>)) <span class="sc">+</span></span>
 <span id="cb19-6"><a href="#cb19-6"></a>  <span class="co"># colores de los grupos </span></span>
 <span id="cb19-7"><a href="#cb19-7"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"darkgreen"</span>, <span class="st">"#5DC3DA"</span>)) <span class="sc">+</span></span>
-<span id="cb19-8"><a href="#cb19-8"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"PBS"</span>,</span>
-<span id="cb19-9"><a href="#cb19-9"></a>       <span class="at">y =</span> <span class="st">"Frecuencia"</span>,</span>
-<span id="cb19-10"><a href="#cb19-10"></a>       <span class="at">title =</span> <span class="st">"Dispensaciones por plan de beneficios"</span>, </span>
-<span id="cb19-11"><a href="#cb19-11"></a>       <span class="at">fill =</span> <span class="st">"Tipo de entrega"</span>) <span class="sc">+</span> </span>
-<span id="cb19-12"><a href="#cb19-12"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb19-8"><a href="#cb19-8"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>percent) <span class="sc">+</span></span>
+<span id="cb19-9"><a href="#cb19-9"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"PBS"</span>,</span>
+<span id="cb19-10"><a href="#cb19-10"></a>       <span class="at">y =</span> <span class="st">"Frecuencia"</span>,</span>
+<span id="cb19-11"><a href="#cb19-11"></a>       <span class="at">title =</span> <span class="st">"Dispensaciones por plan de beneficios"</span>, </span>
+<span id="cb19-12"><a href="#cb19-12"></a>       <span class="at">fill =</span> <span class="st">"Tipo de entrega"</span>) <span class="sc">+</span> </span>
+<span id="cb19-13"><a href="#cb19-13"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 </section>
@@ -856,15 +859,52 @@ $ tipo_entrega           &lt;chr&gt; "PRESENCIAL", "PRESENCIAL", "PRESENCIAL", "
 <span id="cb22-21"><a href="#cb22-21"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
-
-<img src="src/alzak_foundation.png" class="slide-logo r-stretch"><div class="footer footer-default">
-<p>Copyright (c) 2023, Fernando Salcedo</p>
-</div>
-</section><section id="gráfico-de-linea-usando-geom_line-geom_point-y-facet_wrap-output" class="slide level2 output-location-slide"><h2>Gráfico de linea usando <code>geom_line()</code>, <code>geom_point()</code> y <code>facet_wrap()</code></h2><div class="cell output-location-slide">
+</section>
+<section id="gráfico-de-linea-usando-geom_line-geom_point-y-facet_wrap-output" class="slide level2 output-location-slide"><h2>Gráfico de linea usando <code>geom_line()</code>, <code>geom_point()</code> y <code>facet_wrap()</code></h2><div class="cell output-location-slide">
 <div class="cell-output-display">
 <p><img data-src="05_resumen_grafico_datos_files/figure-revealjs/unnamed-chunk-16-1.png" width="960"></p>
 </div>
-</div></section></section>
+</div></section><section id="guardar-un-gráfico" class="slide level2">
+<h2>Guardar un gráfico</h2>
+<ul>
+<li>Usamos el comando <code>ggsave()</code> para guardar un gráfico</li>
+<li>O podemos usar la ventana <code>Plots &gt; Export &gt; Save imagen as</code></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="co"># mi grafico </span></span>
+<span id="cb23-2"><a href="#cb23-2"></a>plot_pbs <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_med, <span class="fu">aes</span>(<span class="at">x =</span> pbs, <span class="at">fill =</span> tipo_entrega)) <span class="sc">+</span></span>
+<span id="cb23-3"><a href="#cb23-3"></a>  <span class="fu">geom_bar</span>(<span class="at">position =</span> <span class="st">"fill"</span>) <span class="sc">+</span></span>
+<span id="cb23-4"><a href="#cb23-4"></a>  <span class="fu">geom_text</span>(</span>
+<span id="cb23-5"><a href="#cb23-5"></a>    <span class="fu">aes</span>(</span>
+<span id="cb23-6"><a href="#cb23-6"></a>      <span class="co"># etiqueta de datos en formato porcentual</span></span>
+<span id="cb23-7"><a href="#cb23-7"></a>      <span class="at">label =</span> scales<span class="sc">::</span><span class="fu">percent</span>(<span class="fu">after_stat</span>(count)<span class="sc">/</span><span class="fu">sum</span>(<span class="fu">after_stat</span>(count)))</span>
+<span id="cb23-8"><a href="#cb23-8"></a>      ),</span>
+<span id="cb23-9"><a href="#cb23-9"></a>    <span class="at">stat =</span> <span class="st">"count"</span>, </span>
+<span id="cb23-10"><a href="#cb23-10"></a>    <span class="co"># posición de la etiqueta en el centro de cada grupo</span></span>
+<span id="cb23-11"><a href="#cb23-11"></a>    <span class="at">position =</span> <span class="fu">position_fill</span>(<span class="at">vjust =</span> <span class="fl">0.5</span>)) <span class="sc">+</span></span>
+<span id="cb23-12"><a href="#cb23-12"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>percent) <span class="sc">+</span></span>
+<span id="cb23-13"><a href="#cb23-13"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"PBS"</span>,</span>
+<span id="cb23-14"><a href="#cb23-14"></a>       <span class="at">y =</span> <span class="st">"%"</span>,</span>
+<span id="cb23-15"><a href="#cb23-15"></a>       <span class="at">title =</span> <span class="st">"Dispensaciones por plan de beneficios"</span>, </span>
+<span id="cb23-16"><a href="#cb23-16"></a>       <span class="at">fill =</span> <span class="st">"Tipo de entrega"</span>) <span class="sc">+</span> </span>
+<span id="cb23-17"><a href="#cb23-17"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb23-18"><a href="#cb23-18"></a></span>
+<span id="cb23-19"><a href="#cb23-19"></a><span class="co"># guardar</span></span>
+<span id="cb23-20"><a href="#cb23-20"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> <span class="st">"../resultados/plot_pbs.png"</span>, plot_pbs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="guardar-un-gráfico-usando-plots" class="slide level2">
+<h2>Guardar un gráfico usando <code>Plots</code></h2>
+
+<img data-src="src/rstudio-plot.png" class="r-stretch"></section>
+<section id="guardar-un-gráfico-usando-plots-1" class="slide level2">
+<h2>Guardar un gráfico usando <code>Plots</code></h2>
+<p><img data-src="src/rstudio-plot-save.png"></p>
+<p><img src="src/alzak_foundation.png" class="slide-logo"></p>
+<div class="footer footer-default">
+<p>Copyright (c) 2023, Fernando Salcedo</p>
+</div>
+</section></section>
     </div>
   </div>
 

@@ -212,6 +212,61 @@ df_covid %>%
   )
 
 
+
+# `dplyr` : Unir dos bases de datos `bind_rows()` ----------------------
+
+# Usamos el comando `bind_rows(base_1, base_2)` permite agregar a las filas de la `base_2` a la `base_1`
+# Solo puedo unir dos bases de datos que tengan **variables en común y que sean del mismo formato**
+
+df_puntaje_mujeres <- data.frame(
+  id = 1:5,
+  sexo = rep("F", 5),
+  puntaje = sample(1:10, 5), # tomar 5 datos aleatorios entre 1 y 10
+  puntaje_anterior = sample(1:10, 5)
+)
+
+df_puntaje_hombres <- data.frame(
+  id = 6:10,
+  sexo = rep("M", 5),
+  puntaje = sample(1:10, 5)
+) 
+
+# ver datos
+df_puntaje_mujeres
+df_puntaje_hombres
+
+# Observer que el resultado es una base de 10 filas uniendo verticalemente las variables
+# Note que hay valores perdidos en `puntaje_anterior` para las últimas 5 filas. La base `df_puntaje_hombres` no tenía esa variable.
+
+bind_rows(df_puntaje_mujeres, df_puntaje_hombres)
+
+
+# `dplyr` : Unir dos bases de datos `bind_rows()`## `dplyr` : U --------
+
+# También usando el comando `bind_cols(base_1, base_2)` agregamos las columnas de la `base_2` a la `base_1`
+
+df_prueba_1 <- data.frame(
+  id = 1:5,
+  nombre = c("Pedro", "Juan", "María", "José", "Carmen"),
+  puntaje_1 = sample(1:10, 5)
+)
+
+df_prueba_2 <- data.frame(
+  id = 1:5,
+  nombre = c("Pedro", "Juan", "María", "José", "Carmen"),
+  puntaje_2 = sample(1:10, 5)
+) 
+
+# ver datos
+df_prueba_1
+df_prueba_2
+
+# `bind_rows()` **NO** cruza los datos por un identificar (ver `joins`).
+# Además, **debe evitar adicionar columnas con nombres repetidos en las dos bases**
+
+bind_cols(df_prueba_1, df_prueba_2[c("puntaje_2")])
+
+
 # `dplyr` : Cruzar base de datos ------------------------------------------
 
 # `dplyr` cuenta con verbos para cruzar bases de datos

@@ -5,13 +5,11 @@
 <script src="03_importar_manipular_datos_files/libs/quarto-html/popper.min.js"></script>
 <script src="03_importar_manipular_datos_files/libs/quarto-html/tippy.umd.min.js"></script>
 <link href="03_importar_manipular_datos_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="03_importar_manipular_datos_files/libs/quarto-html/light-border.css" rel="stylesheet">
 <link href="03_importar_manipular_datos_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
 <link href="03_importar_manipular_datos_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.3.353">
+  <meta name="generator" content="quarto-1.2.269">
 
   <meta name="author" content="Fernando Salcedo Mejía, ALZAK Foundation">
-  <meta name="dcterms.date" content="2023-08-19">
   <title>Importar, manipular y exportar bases de datos en R</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -27,10 +25,9 @@
     ul.task-list{list-style: none;}
     ul.task-list li input[type="checkbox"] {
       width: 0.8em;
-      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      margin: 0 0.8em 0.2em -1.6em;
       vertical-align: middle;
     }
-    /* CSS for syntax highlighting */
     pre > code.sourceCode { white-space: pre; position: relative; }
     pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
@@ -96,7 +93,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="03_importar_manipular_datos_files/libs/revealjs/dist/theme/quarto.css">
+  <link rel="stylesheet" href="03_importar_manipular_datos_files/libs/revealjs/dist/theme/quarto.css" id="theme">
   <link href="03_importar_manipular_datos_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="03_importar_manipular_datos_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="03_importar_manipular_datos_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -139,44 +136,44 @@
     font-weight: 400;
   }
 
-  .callout.callout-titled.callout-style-simple .callout-body {
+  .callout.callout-captioned.callout-style-simple .callout-body {
     margin-top: 0.2em;
   }
 
-  .callout:not(.callout-titled) .callout-body {
+  .callout:not(.callout-captioned) .callout-body {
       display: flex;
   }
 
-  .callout:not(.no-icon).callout-titled.callout-style-simple .callout-content {
+  .callout:not(.no-icon).callout-captioned.callout-style-simple .callout-content {
     padding-left: 1.6em;
   }
 
-  .callout.callout-titled .callout-header {
+  .callout.callout-captioned .callout-header {
     padding-top: 0.2em;
     margin-bottom: -0.2em;
   }
 
-  .callout.callout-titled .callout-title  p {
+  .callout.callout-captioned .callout-caption  p {
     margin-top: 0.5em;
     margin-bottom: 0.5em;
   }
     
-  .callout.callout-titled.callout-style-simple .callout-content  p {
+  .callout.callout-captioned.callout-style-simple .callout-content  p {
     margin-top: 0;
   }
 
-  .callout.callout-titled.callout-style-default .callout-content  p {
+  .callout.callout-captioned.callout-style-default .callout-content  p {
     margin-top: 0.7em;
   }
 
-  .callout.callout-style-simple div.callout-title {
+  .callout.callout-style-simple div.callout-caption {
     border-bottom: none;
     font-size: .9rem;
     font-weight: 600;
     opacity: 75%;
   }
 
-  .callout.callout-style-default  div.callout-title {
+  .callout.callout-style-default  div.callout-caption {
     border-bottom: none;
     font-weight: 600;
     opacity: 85%;
@@ -208,7 +205,7 @@
     background-size: 0.9rem 0.9rem;
   }
 
-  .callout-title {
+  .callout-caption {
     display: flex
   }
     
@@ -221,16 +218,16 @@
     display: none !important;
   }
 
-  .callout.callout-titled .callout-body > .callout-content > :last-child {
+  .callout.callout-captioned .callout-body > .callout-content > :last-child {
     margin-bottom: 0.5rem;
   }
 
-  .callout.callout-titled .callout-icon::before {
+  .callout.callout-captioned .callout-icon::before {
     margin-top: .5rem;
     padding-right: .5rem;
   }
 
-  .callout:not(.callout-titled) .callout-icon::before {
+  .callout:not(.callout-captioned) .callout-icon::before {
     margin-top: 1rem;
     padding-right: .5rem;
   }
@@ -245,7 +242,7 @@
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAEU0lEQVRYCcVXTWhcVRQ+586kSUMMxkyaElstCto2SIhitS5Ek8xUKV2poatCcVHtUlFQk8mbaaziwpWgglJwVaquitBOfhQXFlqlzSJpFSpIYyXNjBNiTCck7x2/8/LeNDOZxDuEkgOXe++553zfefee+/OYLOXFk3+1LLrRdiO81yNqZ6K9cG0P3MeFaMIQjXssE8Z1JzLO9ls20MBZX7oG8w9GxB0goaPrW5aNMp1yOZIa7Wv6o2ykpLtmAPs/vrG14Z+6d4jpbSKuhdcSyq9wGMPXjonwmESXrriLzFGOdDBLB8Y6MNYBu0dRokSygMA/mrun8MGFN3behm6VVAwg4WR3i6FvYK1T7MHo9BK7ydH+1uurECoouk5MPRyVSBrBHMYwVobG2aOXM07sWrn5qgB60rc6mcwIDJtQrnrEr44kmy+UO9r0u9O5/YbkS9juQckLed3DyW2XV/qWBBB3ptvI8EUY3I9p/67OW+g967TNr3Sotn3IuVlfMLVnsBwH4fsnebJvyGm5GeIUA3jljERmrv49SizPYuq+z7c2H/jlGC+Ghhupn/hcapqmcudB9jwJ/3jvnvu6vu5lVzF1fXyZuZZ7U8nRmVzytvT+H3kilYvH09mLWrQdwFSsFEsxFVs5fK7A0g8gMZjbif4ACpKbjv7gNGaD8bUrlk8x+KRflttr22JEMRUbTUwwDQScyzPgedQHZT0xnx7ujw2jfVfExwYHwOsDTjLdJ2ebmeQIlJ7neo41s/DrsL3kl+W2lWvAga0tR3zueGr6GL78M3ifH0rGXrBC2aAR8uYcIA5gwV8zIE8onoh8u0Fca/ciF7j1uOzEnqcIm59sEXoGc0+z6+H45V1CvAvHcD7THztu669cnp+L0okAeIc6zjbM/24LgGM1gZk7jnRu1aQWoU9sfUOuhrmtaPIO3YY1KLLWZaEO5TKUbMY5zx8W9UJ6elpLwKXbsaZ4EFl7B4bMtDv0iRipKoDQT2sNQI9b1utXFdYisi+wzZ/ri/1m7QfDgEuvgUUEIJPq3DhX/5DWNqIXDOweC2wvIR90Oq3lDpdMIgD2r0dXvGdsEW5H6x6HLRJYU7C69VefO1x8Gde1ZFSJLfWS1jbCnhtOPxmpfv2LXOA2Xk2tvnwKKPFuZ/oRmwBwqRQDcKNeVQkYcOjtWVBuM/JuYw5b6isojIkYxyYAFn5K7ZBF10fea52y8QltAg6jnMqNHFBmGkQ1j+U43HMi2xMar1Nv0zGsf1s8nUsmUtPOOrbFIR8bHFDMB5zL13Gmr/kGlCkUzedTzzmzsaJXhYawnA3UmARpiYj5ooJZiUoxFRtK3X6pgNPv+IZVPcnwbOl6f+aBaO1CNvPW9n9LmCp01nuSaTRF2YxHqZ8DYQT6WsXT+RD6eUztwYLZ8rM+rcPxamv1VQzFUkzFXvkiVrySGQgJNvXHJAxiU3/NwiC03rSf05VBaPtu/Z7/B8Yn/w7eguloAAAAAElFTkSuQmCC');
   }
 
-  div.callout-note.callout-style-default .callout-title {
+  div.callout-note.callout-style-default .callout-caption {
     background-color: #dae6fb
   }
 
@@ -257,7 +254,7 @@
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAEKklEQVRYCcVXTWhcVRS+575MJym48A+hSRFr00ySRQhURRfd2HYjk2SSTokuBCkU2o0LoSKKraKIBTcuFCoidGFD08nkBzdREbpQ1EDNIv8qSGMFUboImMSZd4/f9zJv8ibJMC8xJQfO3HPPPef7zrvvvnvviIkpC9nsw0UttFunbUhpFzFtarSd6WJkStVMw5xyVqYTvkwfzuf/5FgtkVoB0729j1rjXwThS7Vio+Mo6DNnvLfahoZ+i/o32lULuJ3NNiz7q6+pyAUkJaFF6JwaM2lUJlV0MlnQn5aTRbEu0SEqHUa0A4AdiGuB1kFXRfVyg5d87+Dg4DL6m2TLAub60ilj7A1Ec4odSAc8X95sHh7+ZRPCFo6Fnp7HfU/fBng/hi10CjCnWnJjsxvDNxWw0NfV6Rv5GgP3I3jGWXumdTD/3cbEOP2ZbOZp69yniG3FQ9z1jD7bnBu9Fc2tKGC2q+uAJOQHBDRiZX1x36o7fWBs7J9ownbtO+n0/qWkvW7UPIfc37WgT6ZGR++EOJyeQDSb9UB+DZ1G6DdLDzyS+b/kBCYGsYgJbSQHuThGKRcw5xdeQf8YdNHsc6ePXrlSYMBuSIAFTGAtQo+VuALo4BX83N190NWZWbynBjhOHsmNfFWLeL6v+ynsA58zDvvAC8j5PkbOcXCMg2PZFk3q8MjI7WAG/Dp9AwP7jdGBOOQkAvlFUB+irtm16I1Zw9YBcpGTGXYmk3kQIC/Cds55l+iMI3jqhjAuaoe+am2Jw5GT3Nbz3CkE12NavmzN5+erJW7046n/CH1RO/RVa8lBLozXk9uqykkGAyRXLWlLv5jyp4RFsG5vGVzpDLnIjTWgnRy2Rr+tDKvRc7Y8AyZq10jj8DqXdnIRNtFZb+t/ZRtXcDiVnzpqx8mPcDWxgARUqx0W1QB9MeUZiNrV4qP+Ehc+BpNgATsTX8ozYKL2NtFYAHc84fG7ndxUPr+AR/iQSns7uSUufAymwDOb2+NjK27lEFocm/EE2WpyIy/Hi66MWuMKJn8RvxIcj87IM5Vh9663ziW36kR0HNenXuxmfaD8JC7tfKbrhFr7LiZCrMjrzTeGx+PmkosrkNzW94ObzwocJ7A1HokLolY+AvkTiD/q1H0cN48c5EL8Crkttsa/AXQVDmutfyku0E7jShx49XqV3MFK8IryDhYVbj7Sj2P2eBxwcXoe8T8idsKKPRcnZw1b+slFTubwUwhktrfnAt7J++jwQtLZcm3sr9LQrjRzz6cfMv9aLvgmnAGvpoaGLxM4mAEaLV7iAzQ3oU0IvD5x9ix3yF2RAAuYAOO2f7PEFWCXZ4C9Pb2UsgDeVnFSpbFK7/IWu7TPTvBqzbGdCHOJQSxiEjt6IyZmxQyEJHv6xyQsYk//moVFsN2zP6fRImjfq7/n/wFDguUQFNEwugAAAABJRU5ErkJggg==');
   }
 
-  div.callout-important.callout-style-default .callout-title {
+  div.callout-important.callout-style-default .callout-caption {
     background-color: #f7dddc
   }
 
@@ -269,7 +266,7 @@
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAETklEQVRYCeVWW2gcVRg+58yaTUnizqbipZeX4uWhBEniBaoUX1Ioze52t7sRq6APio9V9MEaoWlVsFasRq0gltaAPuxms8lu0gcviE/FFOstVbSIxgcv6SU7EZqmdc7v9+9mJtNks51NTUH84ed889/PP+cmxP+d5FIbMJmNbpREu4WUkiTtCicKny0l1pIKmBzovF2S+hIJHX8iEu3hZJ5lNZGqyRrGSIQpq15AzF28jgpeY6yk6GVdrfFqdrD6Iw+QlB8g0YS2g7dyQmXM/IDhBhT0UCiRf59lfqmmDvzRt6kByV/m4JjtzuaujMUM2c5Z2d6JdKrRb3K2q6mA+oYVz8JnDdKPmmNthzkAk/lN63sYPgevrguc72aZX/L9C6x09GYyxBgCX4NlvyGUHOKELlm5rXeR1kchuChJt4SSwyddZRXgvwMGvYo4QSlk3/zkHD8UHxwVJA6zjZZqP8v8kK8OWLnIZtLyCAJagYC4rTGW/9Pqj92N/c+LUaAj27movwbi19tk/whRCIE7Q9vyI6yvRpftAKVTdUjOW40X3h5OXsKCdmFcx0xlLJoSuQngnrJe7Kcjm4OMq9FlC7CMmScQANuNvjfP3PjGXDBaUQmbp296S5L4DrpbrHN1T87ZVEZVCzg1FF0Ft+dKrlLukI+/c9ENo+TvlTDbYFvuKPtQ9+l052rXrgKoWkDAFnvh0wTOmYn8R5f4k/jN/fZiCM1tQx9jQQ4ANhqG4hiL0qIFTGViG9DKB7GYzgubnpofgYRwO+DFjh0Zin2m4b/97EDkXkc+f6xYAPX0KK2I/7fUQuwzuwo/L3AkcjugPNixC8cHf0FyPjWlItmLxWw4Ou9YsQCr5fijMGoD/zpdRy95HRysyXA74MWOnscpO4j2y3HAVisw85hX5+AFBRSHt4ShfLFkIMXTqyKFc46xdzQM6XbAi702a7sy04J0+feReMFKp5q9esYLCqAZYw/k14E/xcLLsFElaornTuJB0svMuJINy8xkIYuL+xPAlWRceH6+HX7THJ0djLUom46zREu7tTkxwmf/FdOZ/sh6Q8qvEAiHpm4PJ4a/doJe0gH1t+aHRgCzOvBvJedEK5OFE5jpm4AGP2a8Dxe3gGJ/pAutug9Gp6he92CsSsWBaEcxGx0FHytmIpuqGkOpldqNYQK8cSoXvd+xLxXADw0kf6UkJNFtdo5MOgaLjiQOQHcn+A6h5NuL2s0qsC2LOM75PcF3yr5STuBSAcGG+meA14K/CI21HcS4LBT6tv0QAh8Dr5l93AhZzG5ZJ4VxAqdZUEl9z7WJ4aN+svMvwHHL21UKTd1mqvChH7/Za5xzXBBKrUcB0TQ+Ulgkfbi/H/YT5EptrGzsEK7tR1B7ln9BBwckYfMiuSqklSznIuoIIOM42MQO+QnduCoFCI0bpkzjCjddHPN/F+2Yu+sd9bKNpVwHhbS3LluK/0zgfwD0xYI5dXuzlQAAAABJRU5ErkJggg==');
   }
 
-  div.callout-warning.callout-style-default .callout-title {
+  div.callout-warning.callout-style-default .callout-caption {
     background-color: #fcefdc
   }
 
@@ -281,7 +278,7 @@
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAADr0lEQVRYCe1XTWgTQRj9ZjZV8a9SPIkKgj8I1bMHsUWrqYLVg4Ue6v9BwZOxSYsIerFao7UiUryIqJcqgtpimhbBXoSCVxUFe9CTiogUrUp2Pt+3aUI2u5vdNh4dmMzOzHvvezuz8xNFM0mjnbXaNu1MvFWRXkXEyE6aYOYJpdW4IXuA4r0fo8qqSMDBU0v1HJUgVieAXxzCsdE/YJTdFcVIZQNMyhruOMJKXYFoLfIfIvVIMWdsrd+Rpd86ZmyzzjJmLStqRn0v8lzkb4rVIXvnpScOJuAn2ACC65FkPzEdEy4TPWRLJ2h7z4cArXzzaOdKlbOvKKX25Wl00jSnrwVxAg3o4dRxhO13RBSdNvH0xSARv3adTXbBdTf64IWO2vH0LT+cv4GR1DJt+DUItaQogeBX/chhbTBxEiZ6gftlDNXTrvT7co4ub5A6gp9HIcHvzTa46OS5fBeP87Qm0fQkr4FsYgVQ7Qg+ZayaDg9jhg1GkWj8RG6lkeSacrrHgDaxdoBiZPg+NXV/KifMuB6//JmYH4CntVEHy/keA6x4h4CU5oFy8GzrBS18cLJMXcljAKB6INjWsRcuZBWVaS3GDrqB7rdapVIeA+isQ57Eev9eCqzqOa81CY05VLd6SamW2wA2H3SiTbnbSxmzfp7WtKZkqy4mdyAlGx7ennghYf8voqp9cLSgKdqNfa6RdRsAAkPwRuJZNbpByn+RrJi1RXTwdi8RQF6ymDwGMAtZ6TVE+4uoKh+MYkcLsT0Hk8eAienbiGdjJHZTpmNjlbFJNKDVAp2fJlYju6IreQxQ08UJDNYdoLSl6AadO+fFuCQqVMB1NJwPm69T04Wv5WhfcWyfXQB+wXRs1pt+nCknRa0LVzSA/2B+a9+zQJadb7IyyV24YAxKp2Jqs3emZTuNnKxsah+uabKbMk7CbTgJx/zIgQYErIeTKRQ9yD9wxVof5YolPHqaWo7TD6tJlh7jQnK5z2n3+fGdggIOx2kaa2YI9QWarc5Ce1ipNWMKeSG4DysFF52KBmTNMmn5HqCFkwy34rDg05gDwgH3bBi+sgFhN/e8QvRn8kbamCOhgrZ9GJhFDgfcMHzFb6BAtjKpFhzTjwv1KCVuxHvCbsSiEz4CANnj84cwHdFXAbAOJ4LTSAawGWFn5tDhLMYz6nWeU2wJfIhmIJBefcd/A5FWQWGgrWzyORZ3Q6HuV+Jf0Bj+BTX69fm1zWgK7By1YTXchFDORywnfQ7GpzOo6S+qECrsx2ifVQAAAABJRU5ErkJggg==');
   }
 
-  div.callout-tip.callout-style-default .callout-title {
+  div.callout-tip.callout-style-default .callout-caption {
     background-color: #ccf1e3
   }
 
@@ -293,7 +290,7 @@
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAACV0lEQVRYCdVWzWoUQRCuqp2ICBLJXgITZL1EfQDBW/bkzUMUD7klD+ATSHBEfAIfQO+iXsWDxJsHL96EHAwhgzlkg8nBg25XWb0zIb0zs9muYYWkoKeru+vn664fBqElyZNuyh167NXJ8Ut8McjbmEraKHkd7uAnAFku+VWdb3reSmRV8PKSLfZ0Gjn3a6Xlcq9YGb6tADjn+lUfTXtVmaZ1KwBIvFI11rRXlWlatwIAAv2asaa9mlB9wwygiDX26qaw1yYPzFXg2N1GgG0FMF8Oj+VIx7E/03lHx8UhvYyNZLN7BwSPgekXXLribw7w5/c8EF+DBK5idvDVYtEEwMeYefjjLAdEyQ3M9nfOkgnPTEkYU+sxMq0BxNR6jExrAI31H1rzvLEfRIdgcv1XEdj6QTQAS2wtstEALLG1yEZ3QhH6oDX7ExBSFEkFINXH98NTrme5IOaaA7kIfiu2L8A3qhH9zRbukdCqdsA98TdElyeMe5BI8Rs2xHRIsoTSSVFfCFCWGPn9XHb4cdobRIWABNf0add9jakDjQJpJ1bTXOJXnnRXHRf+dNL1ZV1MBRCXhMbaHqGI1JkKIL7+i8uffuP6wVQAzO7+qVEbF6NbS0LJureYcWXUUhH66nLR5rYmva+2tjRFtojkM2aD76HEGAD3tPtKM309FJg5j/K682ywcWJ3PASCcycH/22u+Bh7Aa0ehM2Fu4z0SAE81HF9RkB21c5bEn4Dzw+/qNOyXr3DCTQDMBOdhi4nAgiFDGCinIa2owCEChUwD8qzd03PG+qdW/4fDzjUMcE1ZpIAAAAASUVORK5CYII=');
   }
 
-  div.callout-caution.callout-style-default .callout-title {
+  div.callout-caution.callout-style-default .callout-caption {
     background-color: #ffe5d0
   }
 
@@ -402,7 +399,7 @@ Fernando Salcedo Mejía, ALZAK Foundation
 </div>
 </div>
 
-  <p class="date">2023-08-19</p>
+  <p class="date">8/19/23</p>
 </section>
 <section id="filosofía-tidy-para-la-manipulación-de-datos-en-r" class="slide level2" data-background-color="#b2d8d8">
 <h2>Filosofía <code>tidy</code> para la manipulación de datos en <code>R</code></h2>
@@ -441,13 +438,13 @@ Fernando Salcedo Mejía, ALZAK Foundation
 <span id="cb1-2"><a href="#cb1-2"></a><span class="fu">tidyverse_sitrep</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>── R &amp; RStudio ─────────────────────────────────────────────────────────────────
-• R: 4.2.2
+• R: 4.1.2
 ── Core packages ───────────────────────────────────────────────────────────────
-• dplyr         (1.1.2)
+• dplyr         (1.1.3)
 • forcats       (1.0.0)
-• ggplot2       (3.4.2 &lt; 3.4.3)
-• lubridate     (1.9.2)
-• purrr         (1.0.1 &lt; 1.0.2)
+• ggplot2       (3.4.3)
+• lubridate     (1.9.3)
+• purrr         (1.0.2)
 • readr         (2.1.4)
 • stringr       (1.5.0)
 • tibble        (3.2.1)
@@ -455,18 +452,18 @@ Fernando Salcedo Mejía, ALZAK Foundation
 ── Non-core packages ───────────────────────────────────────────────────────────
 • broom         (1.0.5)
 • conflicted    (1.2.0)
-• dbplyr        (2.3.3)
+• dbplyr        (2.3.4)
 • dtplyr        (1.3.1)
 • googledrive   (2.1.1)
 • googlesheets4 (1.1.1)
 • haven         (2.5.3)
 • hms           (1.1.3)
-• httr          (1.4.6 &lt; 1.4.7)
+• httr          (1.4.7)
 • jsonlite      (1.8.7)
 • magrittr      (2.0.3)
 • modelr        (0.1.11)
 • pillar        (1.9.0)
-• ragg          (1.2.5)
+• ragg          (1.2.5 &lt; 1.2.6)
 • readxl        (1.4.3)
 • reprex        (2.0.2)
 • rlang         (1.1.1)
@@ -484,9 +481,9 @@ Fernando Salcedo Mejía, ALZAK Foundation
 <li>El paquete <code>readr</code> permite leer <strong>archivos planos</strong></li>
 <li>También ajusta el formato adecuado para cargarlo en <code>R</code></li>
 </ul>
-<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout callout-note callout-captioned callout-style-default">
 <div class="callout-body">
-<div class="callout-title">
+<div class="callout-caption">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -530,6 +527,9 @@ Fernando Salcedo Mejía, ALZAK Foundation
 </section>
 <section id="base-de-casos-covid-19-en-bolívar" class="slide level2">
 <h2>Base de casos COVID-19 en Bolívar 🦠</h2>
+<div class="cell">
+
+</div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># importar un archivo delimitado por comas</span></span>
 <span id="cb3-2"><a href="#cb3-2"></a>df_covid <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../datos/casos_covid-19_bolivar.csv"</span>)</span>
@@ -593,9 +593,9 @@ $ `Nombre del grupo étnico`      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, "…</
 </tr>
 </tbody>
 </table>
-<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout callout-note callout-captioned callout-style-default">
 <div class="callout-body">
-<div class="callout-title">
+<div class="callout-caption">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1205,33 +1205,176 @@ $ edad_years                   &lt;dbl&gt; 85, 30, 30, 27, 54, 24, 21, 24,…</c
 </div>
 </div>
 </section>
-<section id="dplyr-cruzar-base-de-datos" class="slide level2">
-<h2><code>dplyr</code> : Cruzar base de datos</h2>
+<section id="dplyr-unir-dos-bases-de-datos-concepto" class="slide level2">
+<h2><code>dplyr</code> : Unir dos bases de datos concepto</h2>
+<ul>
+<li>Usamos el comando <code>bind_rows(base_1, base_2)</code> permite agregar a las filas de la <code>base_2</code> a la <code>base_1</code></li>
+<li>También usando el comando <code>bind_cols(base_1, base_2)</code> agregamos las columnas de la <code>base_2</code> a la <code>base_1</code></li>
+</ul>
+<div class="callout callout-warning callout-captioned callout-style-default">
+<div class="callout-body">
+<div class="callout-caption">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Warning</strong></p>
+</div>
+<div class="callout-content">
+<p>Solo puedo unir dos bases de datos que tengan <strong>variables en común y que sean del mismo formato</strong></p>
+</div>
+</div>
+</div>
+</section>
+<section id="dplyr-unir-dos-bases-de-datos-ejemplo" class="slide level2">
+<h2><code>dplyr</code> : Unir dos bases de datos ejemplo</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1"></a>df_puntaje_mujeres <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb45-2"><a href="#cb45-2"></a>  <span class="at">id =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,</span>
+<span id="cb45-3"><a href="#cb45-3"></a>  <span class="at">sexo =</span> <span class="fu">rep</span>(<span class="st">"F"</span>, <span class="dv">5</span>),</span>
+<span id="cb45-4"><a href="#cb45-4"></a>  <span class="at">puntaje =</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">5</span>), <span class="co"># tomar 5 datos aleatorios entre 1 y 10</span></span>
+<span id="cb45-5"><a href="#cb45-5"></a>  <span class="at">puntaje_anterior =</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">5</span>)</span>
+<span id="cb45-6"><a href="#cb45-6"></a>)</span>
+<span id="cb45-7"><a href="#cb45-7"></a></span>
+<span id="cb45-8"><a href="#cb45-8"></a>df_puntaje_hombres <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb45-9"><a href="#cb45-9"></a>  <span class="at">id =</span> <span class="dv">6</span><span class="sc">:</span><span class="dv">10</span>,</span>
+<span id="cb45-10"><a href="#cb45-10"></a>  <span class="at">sexo =</span> <span class="fu">rep</span>(<span class="st">"M"</span>, <span class="dv">5</span>),</span>
+<span id="cb45-11"><a href="#cb45-11"></a>  <span class="at">puntaje =</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">5</span>)</span>
+<span id="cb45-12"><a href="#cb45-12"></a>) </span>
+<span id="cb45-13"><a href="#cb45-13"></a></span>
+<span id="cb45-14"><a href="#cb45-14"></a><span class="co"># ver datos</span></span>
+<span id="cb45-15"><a href="#cb45-15"></a>df_puntaje_mujeres</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  id sexo puntaje puntaje_anterior
+1  1    F       8                3
+2  2    F       4                1
+3  3    F       6                2
+4  4    F       2                9
+5  5    F       5                4</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1"></a>df_puntaje_hombres</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  id sexo puntaje
+1  6    M       9
+2  7    M       8
+3  8    M       7
+4  9    M      10
+5 10    M       4</code></pre>
+</div>
+</div>
+</section>
+<section id="dplyr-unir-dos-bases-de-datos-bind_rows" class="slide level2">
+<h2><code>dplyr</code> : Unir dos bases de datos <code>bind_rows()</code></h2>
+<ul>
+<li>Observer que el resultado es una base de 10 filas uniendo verticalemente las variables</li>
+<li>Note que hay valores perdidos en <code>puntaje_anterior</code> para las últimas 5 filas. La base <code>df_puntaje_hombres</code> no tenía esa variable.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1"></a><span class="fu">bind_rows</span>(df_puntaje_mujeres, df_puntaje_hombres)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   id sexo puntaje puntaje_anterior
+1   1    F       8                3
+2   2    F       4                1
+3   3    F       6                2
+4   4    F       2                9
+5   5    F       5                4
+6   6    M       9               NA
+7   7    M       8               NA
+8   8    M       7               NA
+9   9    M      10               NA
+10 10    M       4               NA</code></pre>
+</div>
+</div>
+</section>
+<section id="dplyr-unir-dos-bases-de-datos-bind_rows-1" class="slide level2">
+<h2><code>dplyr</code> : Unir dos bases de datos <code>bind_rows()</code></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1"></a>df_prueba_1 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb51-2"><a href="#cb51-2"></a>  <span class="at">id =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,</span>
+<span id="cb51-3"><a href="#cb51-3"></a>  <span class="at">nombre =</span> <span class="fu">c</span>(<span class="st">"Pedro"</span>, <span class="st">"Juan"</span>, <span class="st">"María"</span>, <span class="st">"José"</span>, <span class="st">"Carmen"</span>),</span>
+<span id="cb51-4"><a href="#cb51-4"></a>  <span class="at">puntaje_1 =</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">5</span>)</span>
+<span id="cb51-5"><a href="#cb51-5"></a>)</span>
+<span id="cb51-6"><a href="#cb51-6"></a></span>
+<span id="cb51-7"><a href="#cb51-7"></a>df_prueba_2 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb51-8"><a href="#cb51-8"></a>  <span class="at">id =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,</span>
+<span id="cb51-9"><a href="#cb51-9"></a>  <span class="at">nombre =</span> <span class="fu">c</span>(<span class="st">"Pedro"</span>, <span class="st">"Juan"</span>, <span class="st">"María"</span>, <span class="st">"José"</span>, <span class="st">"Carmen"</span>),</span>
+<span id="cb51-10"><a href="#cb51-10"></a>  <span class="at">puntaje_2 =</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">5</span>)</span>
+<span id="cb51-11"><a href="#cb51-11"></a>) </span>
+<span id="cb51-12"><a href="#cb51-12"></a></span>
+<span id="cb51-13"><a href="#cb51-13"></a><span class="co"># ver datos</span></span>
+<span id="cb51-14"><a href="#cb51-14"></a>df_prueba_1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  id nombre puntaje_1
+1  1  Pedro         2
+2  2   Juan         1
+3  3  María         8
+4  4   José        10
+5  5 Carmen         7</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1"></a>df_prueba_2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  id nombre puntaje_2
+1  1  Pedro         8
+2  2   Juan         5
+3  3  María         3
+4  4   José         7
+5  5 Carmen         4</code></pre>
+</div>
+</div>
+</section>
+<section id="dplyr-unir-dos-bases-de-datos-bind_rows-2" class="slide level2">
+<h2><code>dplyr</code> : Unir dos bases de datos <code>bind_rows()</code></h2>
+<div class="callout callout-warning callout-captioned callout-style-default">
+<div class="callout-body">
+<div class="callout-caption">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Warning</strong></p>
+</div>
+<div class="callout-content">
+<p><code>bind_rows()</code> <strong>NO</strong> cruza los datos por un identificar (ver <code>joins</code>). Además, <strong>debe evitar adicionar columnas con nombres repetidos en las dos bases</strong></p>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1"></a><span class="fu">bind_cols</span>(df_prueba_1, df_prueba_2[<span class="fu">c</span>(<span class="st">"puntaje_2"</span>)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  id nombre puntaje_1 puntaje_2
+1  1  Pedro         2         8
+2  2   Juan         1         5
+3  3  María         8         3
+4  4   José        10         7
+5  5 Carmen         7         4</code></pre>
+</div>
+</div>
+</section>
+<section id="dplyr-cruzar-base-de-datos-joins" class="slide level2">
+<h2><code>dplyr</code> : Cruzar base de datos <code>joins</code></h2>
 <ul>
 <li><code>dplyr</code> cuenta con verbos para cruzar bases de datos</li>
 <li>Supongamos que tenemos una base de datos <code>df_x</code> y una <code>df_y</code> que tienen un identificador en común: <code>id</code></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1"></a><span class="co"># base df_x</span></span>
-<span id="cb45-2"><a href="#cb45-2"></a>df_x <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb45-3"><a href="#cb45-3"></a>  <span class="at">id =</span>  <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>),</span>
-<span id="cb45-4"><a href="#cb45-4"></a>  <span class="at">valor_x =</span> <span class="fu">c</span>(<span class="dv">12</span>, <span class="dv">34</span>, <span class="dv">45</span>)</span>
-<span id="cb45-5"><a href="#cb45-5"></a>)</span>
-<span id="cb45-6"><a href="#cb45-6"></a></span>
-<span id="cb45-7"><a href="#cb45-7"></a>df_x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1"></a><span class="co"># base df_x</span></span>
+<span id="cb57-2"><a href="#cb57-2"></a>df_x <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb57-3"><a href="#cb57-3"></a>  <span class="at">id =</span>  <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>),</span>
+<span id="cb57-4"><a href="#cb57-4"></a>  <span class="at">valor_x =</span> <span class="fu">c</span>(<span class="dv">12</span>, <span class="dv">34</span>, <span class="dv">45</span>)</span>
+<span id="cb57-5"><a href="#cb57-5"></a>)</span>
+<span id="cb57-6"><a href="#cb57-6"></a></span>
+<span id="cb57-7"><a href="#cb57-7"></a>df_x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  id valor_x
 1  1      12
 2  2      34
 3  3      45</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1"></a><span class="co"># base df_y</span></span>
-<span id="cb47-2"><a href="#cb47-2"></a>df_y <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb47-3"><a href="#cb47-3"></a>  <span class="at">id =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>),</span>
-<span id="cb47-4"><a href="#cb47-4"></a>  <span class="at">valor_y =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>)</span>
-<span id="cb47-5"><a href="#cb47-5"></a>)</span>
-<span id="cb47-6"><a href="#cb47-6"></a></span>
-<span id="cb47-7"><a href="#cb47-7"></a>df_y</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1"></a><span class="co"># base df_y</span></span>
+<span id="cb59-2"><a href="#cb59-2"></a>df_y <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb59-3"><a href="#cb59-3"></a>  <span class="at">id =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>),</span>
+<span id="cb59-4"><a href="#cb59-4"></a>  <span class="at">valor_y =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>)</span>
+<span id="cb59-5"><a href="#cb59-5"></a>)</span>
+<span id="cb59-6"><a href="#cb59-6"></a></span>
+<span id="cb59-7"><a href="#cb59-7"></a>df_y</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  id valor_y
 1  1       A
@@ -1246,7 +1389,7 @@ $ edad_years                   &lt;dbl&gt; 85, 30, 30, 27, 54, 24, 21, 24,…</c
 <li><code>inner_join()</code> : Adicionar y retiene los indicadores que coinciden entre las bases <code>df_x</code>, <code>df_y</code></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1"></a><span class="fu">inner_join</span>(df_x, df_y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1"></a><span class="fu">inner_join</span>(df_x, df_y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  id valor_x valor_y
 1  1      12       A
@@ -1257,7 +1400,7 @@ $ edad_years                   &lt;dbl&gt; 85, 30, 30, 27, 54, 24, 21, 24,…</c
 <li><code>left_join()</code> : Adicionar a la base <code>df_x</code> las variables de <code>df_y</code> de los indicadores que coinciden</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1"></a><span class="fu">left_join</span>(df_x, df_y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1"></a><span class="fu">left_join</span>(df_x, df_y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  id valor_x valor_y
 1  1      12       A
@@ -1269,7 +1412,7 @@ $ edad_years                   &lt;dbl&gt; 85, 30, 30, 27, 54, 24, 21, 24,…</c
 <li><code>full_join()</code> : Adicionar y retiene los indicadores que coinciden y los que no entre las bases <code>df_x</code>, <code>df_y</code></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1"></a><span class="fu">full_join</span>(df_x, df_y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1"></a><span class="fu">full_join</span>(df_x, df_y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  id valor_x valor_y
 1  1      12       A
@@ -1282,24 +1425,24 @@ $ edad_years                   &lt;dbl&gt; 85, 30, 30, 27, 54, 24, 21, 24,…</c
 <section id="dplyr-uso-de-left_join-en-la-base-de-ejemplo" class="slide level2">
 <h2><code>dplyr</code> : Uso de <code>left_join()</code> en la base de ejemplo</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1"></a><span class="co"># casos por municipios</span></span>
-<span id="cb55-2"><a href="#cb55-2"></a>df_casos_mun <span class="ot">&lt;-</span> df_covid <span class="sc">%&gt;%</span> </span>
-<span id="cb55-3"><a href="#cb55-3"></a>  <span class="fu">count</span>(codigo_divipola_municipio, nombre_municipio, <span class="at">name =</span> <span class="st">"casos"</span>) </span>
-<span id="cb55-4"><a href="#cb55-4"></a></span>
-<span id="cb55-5"><a href="#cb55-5"></a><span class="co"># muertes por municipios</span></span>
-<span id="cb55-6"><a href="#cb55-6"></a>df_muertes_mun <span class="ot">&lt;-</span> df_covid <span class="sc">%&gt;%</span> </span>
-<span id="cb55-7"><a href="#cb55-7"></a>  <span class="fu">filter</span>(recuperado <span class="sc">==</span> <span class="st">"FALLECIDO"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb55-8"><a href="#cb55-8"></a>  <span class="fu">count</span>(codigo_divipola_municipio, <span class="at">name =</span> <span class="st">"muertes"</span>)</span>
-<span id="cb55-9"><a href="#cb55-9"></a></span>
-<span id="cb55-10"><a href="#cb55-10"></a><span class="co"># agregar a la base de casos las muertes</span></span>
-<span id="cb55-11"><a href="#cb55-11"></a>df_casos_muertes_mun <span class="ot">&lt;-</span> df_casos_mun <span class="sc">%&gt;%</span> </span>
-<span id="cb55-12"><a href="#cb55-12"></a>  <span class="fu">left_join</span>(</span>
-<span id="cb55-13"><a href="#cb55-13"></a>    df_muertes_mun</span>
-<span id="cb55-14"><a href="#cb55-14"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb55-15"><a href="#cb55-15"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>casos)</span>
-<span id="cb55-16"><a href="#cb55-16"></a>  </span>
-<span id="cb55-17"><a href="#cb55-17"></a><span class="co"># vemos la base de datos</span></span>
-<span id="cb55-18"><a href="#cb55-18"></a>df_casos_muertes_mun</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1"></a><span class="co"># casos por municipios</span></span>
+<span id="cb67-2"><a href="#cb67-2"></a>df_casos_mun <span class="ot">&lt;-</span> df_covid <span class="sc">%&gt;%</span> </span>
+<span id="cb67-3"><a href="#cb67-3"></a>  <span class="fu">count</span>(codigo_divipola_municipio, nombre_municipio, <span class="at">name =</span> <span class="st">"casos"</span>) </span>
+<span id="cb67-4"><a href="#cb67-4"></a></span>
+<span id="cb67-5"><a href="#cb67-5"></a><span class="co"># muertes por municipios</span></span>
+<span id="cb67-6"><a href="#cb67-6"></a>df_muertes_mun <span class="ot">&lt;-</span> df_covid <span class="sc">%&gt;%</span> </span>
+<span id="cb67-7"><a href="#cb67-7"></a>  <span class="fu">filter</span>(recuperado <span class="sc">==</span> <span class="st">"FALLECIDO"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb67-8"><a href="#cb67-8"></a>  <span class="fu">count</span>(codigo_divipola_municipio, <span class="at">name =</span> <span class="st">"muertes"</span>)</span>
+<span id="cb67-9"><a href="#cb67-9"></a></span>
+<span id="cb67-10"><a href="#cb67-10"></a><span class="co"># agregar a la base de casos las muertes</span></span>
+<span id="cb67-11"><a href="#cb67-11"></a>df_casos_muertes_mun <span class="ot">&lt;-</span> df_casos_mun <span class="sc">%&gt;%</span> </span>
+<span id="cb67-12"><a href="#cb67-12"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb67-13"><a href="#cb67-13"></a>    df_muertes_mun</span>
+<span id="cb67-14"><a href="#cb67-14"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb67-15"><a href="#cb67-15"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>casos)</span>
+<span id="cb67-16"><a href="#cb67-16"></a>  </span>
+<span id="cb67-17"><a href="#cb67-17"></a><span class="co"># vemos la base de datos</span></span>
+<span id="cb67-18"><a href="#cb67-18"></a>df_casos_muertes_mun</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 46 × 4
    codigo_divipola_municipio nombre_municipio      casos muertes
@@ -1333,20 +1476,20 @@ $ edad_years                   &lt;dbl&gt; 85, 30, 30, 27, 54, 24, 21, 24,…</c
 <section id="usando-pivot_wider-en-la-base-covid-19" class="slide level2">
 <h2>Usando <code>pivot_wider()</code> en la base COVID-19</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1"></a><span class="co"># casos por año, mes y municipios</span></span>
-<span id="cb57-2"><a href="#cb57-2"></a>df_covid_year_mes <span class="ot">&lt;-</span> df_covid <span class="sc">%&gt;%</span> </span>
-<span id="cb57-3"><a href="#cb57-3"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb57-4"><a href="#cb57-4"></a>    <span class="at">year =</span> <span class="fu">year</span>(fecha_de_notificacion),</span>
-<span id="cb57-5"><a href="#cb57-5"></a>    <span class="at">mes =</span> <span class="fu">month</span>(fecha_de_notificacion)</span>
-<span id="cb57-6"><a href="#cb57-6"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb57-7"><a href="#cb57-7"></a>  <span class="fu">select</span>(id_de_caso, nombre_municipio, year, mes)</span>
-<span id="cb57-8"><a href="#cb57-8"></a></span>
-<span id="cb57-9"><a href="#cb57-9"></a><span class="co"># resumimos los datos</span></span>
-<span id="cb57-10"><a href="#cb57-10"></a>df_casos_mes <span class="ot">&lt;-</span> df_covid_year_mes <span class="sc">%&gt;%</span>  </span>
-<span id="cb57-11"><a href="#cb57-11"></a>  <span class="fu">count</span>(nombre_municipio, year, mes, <span class="at">name =</span> <span class="st">"casos"</span>)</span>
-<span id="cb57-12"><a href="#cb57-12"></a></span>
-<span id="cb57-13"><a href="#cb57-13"></a><span class="co"># vemos los datos </span></span>
-<span id="cb57-14"><a href="#cb57-14"></a>df_casos_mes</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1"></a><span class="co"># casos por año, mes y municipios</span></span>
+<span id="cb69-2"><a href="#cb69-2"></a>df_covid_year_mes <span class="ot">&lt;-</span> df_covid <span class="sc">%&gt;%</span> </span>
+<span id="cb69-3"><a href="#cb69-3"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb69-4"><a href="#cb69-4"></a>    <span class="at">year =</span> <span class="fu">year</span>(fecha_de_notificacion),</span>
+<span id="cb69-5"><a href="#cb69-5"></a>    <span class="at">mes =</span> <span class="fu">month</span>(fecha_de_notificacion)</span>
+<span id="cb69-6"><a href="#cb69-6"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb69-7"><a href="#cb69-7"></a>  <span class="fu">select</span>(id_de_caso, nombre_municipio, year, mes)</span>
+<span id="cb69-8"><a href="#cb69-8"></a></span>
+<span id="cb69-9"><a href="#cb69-9"></a><span class="co"># resumimos los datos</span></span>
+<span id="cb69-10"><a href="#cb69-10"></a>df_casos_mes <span class="ot">&lt;-</span> df_covid_year_mes <span class="sc">%&gt;%</span>  </span>
+<span id="cb69-11"><a href="#cb69-11"></a>  <span class="fu">count</span>(nombre_municipio, year, mes, <span class="at">name =</span> <span class="st">"casos"</span>)</span>
+<span id="cb69-12"><a href="#cb69-12"></a></span>
+<span id="cb69-13"><a href="#cb69-13"></a><span class="co"># vemos los datos </span></span>
+<span id="cb69-14"><a href="#cb69-14"></a>df_casos_mes</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 573 × 4
    nombre_municipio  year   mes casos
@@ -1363,16 +1506,16 @@ $ edad_years                   &lt;dbl&gt; 85, 30, 30, 27, 54, 24, 21, 24,…</c
 10 ACHI              2021     3     8
 # ℹ 563 more rows</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1"></a><span class="co"># pasar los años de las filas a variable</span></span>
-<span id="cb59-2"><a href="#cb59-2"></a>df_casos_mes_wide <span class="ot">&lt;-</span> df_casos_mes <span class="sc">%&gt;%</span> </span>
-<span id="cb59-3"><a href="#cb59-3"></a>  <span class="fu">arrange</span>(nombre_municipio, mes) <span class="sc">%&gt;%</span> <span class="co"># ordenar los datos por mes</span></span>
-<span id="cb59-4"><a href="#cb59-4"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> mes, <span class="co"># valores que serán columnas</span></span>
-<span id="cb59-5"><a href="#cb59-5"></a>              <span class="at">values_from =</span> casos, <span class="co"># valores a trasponer</span></span>
-<span id="cb59-6"><a href="#cb59-6"></a>              <span class="at">names_prefix =</span> <span class="st">"mes_"</span>, <span class="co"># prefijo de los nombres </span></span>
-<span id="cb59-7"><a href="#cb59-7"></a>              <span class="at">values_fill =</span> <span class="dv">0</span>) <span class="co"># si no hay valores coloca un 0</span></span>
-<span id="cb59-8"><a href="#cb59-8"></a></span>
-<span id="cb59-9"><a href="#cb59-9"></a><span class="co"># vemos los datos</span></span>
-<span id="cb59-10"><a href="#cb59-10"></a>df_casos_mes_wide</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1"></a><span class="co"># pasar los años de las filas a variable</span></span>
+<span id="cb71-2"><a href="#cb71-2"></a>df_casos_mes_wide <span class="ot">&lt;-</span> df_casos_mes <span class="sc">%&gt;%</span> </span>
+<span id="cb71-3"><a href="#cb71-3"></a>  <span class="fu">arrange</span>(nombre_municipio, mes) <span class="sc">%&gt;%</span> <span class="co"># ordenar los datos por mes</span></span>
+<span id="cb71-4"><a href="#cb71-4"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> mes, <span class="co"># valores que serán columnas</span></span>
+<span id="cb71-5"><a href="#cb71-5"></a>              <span class="at">values_from =</span> casos, <span class="co"># valores a trasponer</span></span>
+<span id="cb71-6"><a href="#cb71-6"></a>              <span class="at">names_prefix =</span> <span class="st">"mes_"</span>, <span class="co"># prefijo de los nombres </span></span>
+<span id="cb71-7"><a href="#cb71-7"></a>              <span class="at">values_fill =</span> <span class="dv">0</span>) <span class="co"># si no hay valores coloca un 0</span></span>
+<span id="cb71-8"><a href="#cb71-8"></a></span>
+<span id="cb71-9"><a href="#cb71-9"></a><span class="co"># vemos los datos</span></span>
+<span id="cb71-10"><a href="#cb71-10"></a>df_casos_mes_wide</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 92 × 14
    nombre_municipio   year mes_1 mes_2 mes_3 mes_4 mes_5 mes_6 mes_7
@@ -1396,14 +1539,14 @@ $ edad_years                   &lt;dbl&gt; 85, 30, 30, 27, 54, 24, 21, 24,…</c
 <section id="usando-pivot_longer-en-la-base-covid-19" class="slide level2">
 <h2>Usando <code>pivot_longer()</code> en la base COVID-19</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1"></a><span class="co"># definimos las colunmnas a pasar a formato largo y valores </span></span>
-<span id="cb61-2"><a href="#cb61-2"></a>df_casos_mes_long <span class="ot">&lt;-</span> df_casos_mes_wide <span class="sc">%&gt;%</span> </span>
-<span id="cb61-3"><a href="#cb61-3"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> mes_1<span class="sc">:</span>mes_12, <span class="co"># variables a transponer</span></span>
-<span id="cb61-4"><a href="#cb61-4"></a>               <span class="at">names_to =</span> <span class="st">"mes"</span>, <span class="co"># nueva variable</span></span>
-<span id="cb61-5"><a href="#cb61-5"></a>               <span class="at">values_to =</span> <span class="st">"casos"</span>) <span class="co"># valores</span></span>
-<span id="cb61-6"><a href="#cb61-6"></a></span>
-<span id="cb61-7"><a href="#cb61-7"></a><span class="co"># vemos los datos</span></span>
-<span id="cb61-8"><a href="#cb61-8"></a>df_casos_mes_long</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1"></a><span class="co"># definimos las colunmnas a pasar a formato largo y valores </span></span>
+<span id="cb73-2"><a href="#cb73-2"></a>df_casos_mes_long <span class="ot">&lt;-</span> df_casos_mes_wide <span class="sc">%&gt;%</span> </span>
+<span id="cb73-3"><a href="#cb73-3"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> mes_1<span class="sc">:</span>mes_12, <span class="co"># variables a transponer</span></span>
+<span id="cb73-4"><a href="#cb73-4"></a>               <span class="at">names_to =</span> <span class="st">"mes"</span>, <span class="co"># nueva variable</span></span>
+<span id="cb73-5"><a href="#cb73-5"></a>               <span class="at">values_to =</span> <span class="st">"casos"</span>) <span class="co"># valores</span></span>
+<span id="cb73-6"><a href="#cb73-6"></a></span>
+<span id="cb73-7"><a href="#cb73-7"></a><span class="co"># vemos los datos</span></span>
+<span id="cb73-8"><a href="#cb73-8"></a>df_casos_mes_long</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1,104 × 4
    nombre_municipio  year mes    casos
@@ -1435,8 +1578,8 @@ $ edad_years                   &lt;dbl&gt; 85, 30, 30, 27, 54, 24, 21, 24,…</c
 </ul></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1"></a><span class="co"># guardar los datos</span></span>
-<span id="cb63-2"><a href="#cb63-2"></a><span class="fu">write_csv</span>(df_casos_muertes_mun, <span class="at">file =</span> <span class="st">"../datos/casos_muertes_bolivar.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1"></a><span class="co"># guardar los datos</span></span>
+<span id="cb75-2"><a href="#cb75-2"></a><span class="fu">write_csv</span>(df_casos_muertes_mun, <span class="at">file =</span> <span class="st">"../datos/casos_muertes_bolivar.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="exportar-a-excel" class="slide level2">
@@ -1445,9 +1588,9 @@ $ edad_years                   &lt;dbl&gt; 85, 30, 30, 27, 54, 24, 21, 24,…</c
 <li>Para exportar usamos el paquete <code>writexl</code></li>
 <li>Su función principal es <code>write_xlsx()</code> que permite exportar bases de datos a archivos de Excel.</li>
 </ul>
-<div class="callout callout-warning callout-titled callout-style-default">
+<div class="callout callout-warning callout-captioned callout-style-default">
 <div class="callout-body">
-<div class="callout-title">
+<div class="callout-caption">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1459,24 +1602,24 @@ $ edad_years                   &lt;dbl&gt; 85, 30, 30, 27, 54, 24, 21, 24,…</c
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1"></a><span class="co"># guardar una base</span></span>
-<span id="cb64-2"><a href="#cb64-2"></a><span class="fu">library</span>(writexl)</span>
-<span id="cb64-3"><a href="#cb64-3"></a></span>
-<span id="cb64-4"><a href="#cb64-4"></a><span class="co"># guardar una base</span></span>
-<span id="cb64-5"><a href="#cb64-5"></a><span class="fu">write_xlsx</span>(df_casos_muertes_mun, <span class="at">path =</span> <span class="st">"../datos/casos_muertes_bolivar.xlsx"</span>)</span>
-<span id="cb64-6"><a href="#cb64-6"></a></span>
-<span id="cb64-7"><a href="#cb64-7"></a><span class="co"># guardar múltiples hojas</span></span>
-<span id="cb64-8"><a href="#cb64-8"></a>list_hojas <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb64-9"><a href="#cb64-9"></a>  <span class="at">casos_mes =</span>  df_casos_mes_wide,</span>
-<span id="cb64-10"><a href="#cb64-10"></a>  <span class="at">resumen_casos_muertes =</span> df_casos_muertes_mun</span>
-<span id="cb64-11"><a href="#cb64-11"></a>)</span>
-<span id="cb64-12"><a href="#cb64-12"></a></span>
-<span id="cb64-13"><a href="#cb64-13"></a><span class="co"># guardar todo</span></span>
-<span id="cb64-14"><a href="#cb64-14"></a><span class="fu">write_xlsx</span>(list_hojas, <span class="at">path =</span> <span class="st">"../datos/covid_bolivar.xlsx"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1"></a><span class="co"># guardar una base</span></span>
+<span id="cb76-2"><a href="#cb76-2"></a><span class="fu">library</span>(writexl)</span>
+<span id="cb76-3"><a href="#cb76-3"></a></span>
+<span id="cb76-4"><a href="#cb76-4"></a><span class="co"># guardar una base</span></span>
+<span id="cb76-5"><a href="#cb76-5"></a><span class="fu">write_xlsx</span>(df_casos_muertes_mun, <span class="at">path =</span> <span class="st">"../datos/casos_muertes_bolivar.xlsx"</span>)</span>
+<span id="cb76-6"><a href="#cb76-6"></a></span>
+<span id="cb76-7"><a href="#cb76-7"></a><span class="co"># guardar múltiples hojas</span></span>
+<span id="cb76-8"><a href="#cb76-8"></a>list_hojas <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb76-9"><a href="#cb76-9"></a>  <span class="at">casos_mes =</span>  df_casos_mes_wide,</span>
+<span id="cb76-10"><a href="#cb76-10"></a>  <span class="at">resumen_casos_muertes =</span> df_casos_muertes_mun</span>
+<span id="cb76-11"><a href="#cb76-11"></a>)</span>
+<span id="cb76-12"><a href="#cb76-12"></a></span>
+<span id="cb76-13"><a href="#cb76-13"></a><span class="co"># guardar todo</span></span>
+<span id="cb76-14"><a href="#cb76-14"></a><span class="fu">write_xlsx</span>(list_hojas, <span class="at">path =</span> <span class="st">"../datos/covid_bolivar.xlsx"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout callout-tip callout-captioned callout-style-default">
 <div class="callout-body">
-<div class="callout-title">
+<div class="callout-caption">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1498,16 +1641,16 @@ $ edad_years                   &lt;dbl&gt; 85, 30, 30, 27, 54, 24, 21, 24,…</c
 <li><strong>Desventajas</strong> : Es exclusivo de <code>R</code></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1"></a><span class="co"># guardar en formato Rds</span></span>
-<span id="cb65-2"><a href="#cb65-2"></a><span class="fu">saveRDS</span>(df_covid, <span class="at">file =</span> <span class="st">"../datos/base_covid_bolivar.rds"</span>)</span>
-<span id="cb65-3"><a href="#cb65-3"></a></span>
-<span id="cb65-4"><a href="#cb65-4"></a><span class="co"># guardar en RData</span></span>
-<span id="cb65-5"><a href="#cb65-5"></a><span class="fu">save</span>(df_casos_mes_wide, df_casos_muertes_mun, </span>
-<span id="cb65-6"><a href="#cb65-6"></a>     <span class="at">file =</span> <span class="st">"../datos/bases_covid_bolivar.RData"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1"></a><span class="co"># guardar en formato Rds</span></span>
+<span id="cb77-2"><a href="#cb77-2"></a><span class="fu">saveRDS</span>(df_covid, <span class="at">file =</span> <span class="st">"../datos/base_covid_bolivar.rds"</span>)</span>
+<span id="cb77-3"><a href="#cb77-3"></a></span>
+<span id="cb77-4"><a href="#cb77-4"></a><span class="co"># guardar en RData</span></span>
+<span id="cb77-5"><a href="#cb77-5"></a><span class="fu">save</span>(df_casos_mes_wide, df_casos_muertes_mun, </span>
+<span id="cb77-6"><a href="#cb77-6"></a>     <span class="at">file =</span> <span class="st">"../datos/bases_covid_bolivar.RData"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="prueba-lo-que-has-aprendido-1." class="slide level2">
-<h2>Prueba lo que has aprendido 1. 🧠</h2>
+<section id="prueba-lo-que-has-aprendido" class="slide level2">
+<h2>Prueba lo que has aprendido 🧠</h2>
 <ul>
 <li>Importa la base <code>base_medicamentos.csv</code> a <code>R</code></li>
 <li>Limpia los nombres usando <code>janitor</code></li>
@@ -1517,16 +1660,6 @@ $ edad_years                   &lt;dbl&gt; 85, 30, 30, 27, 54, 24, 21, 24,…</c
 <li>Transponer los datos colocando los meses en las columnas y las filas los departamentos, municipios y años.</li>
 <li>Exporta a un archivo plano delimitado por comas el resultado anterior. Use el nombre <code>dispensacion_cardiovascular.csv</code>.</li>
 <li>Exportar a Excel el los mismos datos, pero cada año debe estar en una sola hoja. Use el nombre <code>dispensacion_cardiovascular.xlsx</code>.</li>
-</ul>
-</section>
-<section id="prueba-lo-que-has-aprendido-2." class="slide level2">
-<h2>Prueba lo que has aprendido 2. 🧠</h2>
-<ul>
-<li>Usando los reportes de proyección de población del DANE entre 1985 a 2035 que está en formato <code>.xlsx</code> realice :</li>
-<li>Importa las distintas bases de datos de población a <code>R</code></li>
-<li>Limpia los nombres usando <code>janitor</code></li>
-<li>Cree una base de datos única formato <code>tidy</code> a lo largo donde solo estén las variables : <code>codigo_dpto, nombre_dpto, codigo_muncipio, nombre_municipio, año, edad, sexo, poblacion</code></li>
-<li>Exporta a un archivo plano delimitado por comas el resultado anterior. Use el nombre <code>proyeccion_poblacion_1985_2035.csv</code>.</li>
 </ul>
 
 <img src="src/alzak_foundation.png" class="slide-logo r-stretch"><div class="footer footer-default">
@@ -1564,7 +1697,7 @@ $ edad_years                   &lt;dbl&gt; 85, 30, 30, 27, 54, 24, 21, 24,…</c
 'autoAnimateEasing': "ease",
 'autoAnimateDuration': 1,
 'autoAnimateUnmatched': true,
-'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
 'smaller': false,
  
         // Display controls in the bottom right corner
@@ -1806,23 +1939,9 @@ $ edad_years                   &lt;dbl&gt; 85, 30, 30, 27, 54, 24, 21, 24,…</c
       tabsets.forEach(function(tabset) {
         const tabby = new Tabby('#' + tabset.id);
       });
-      const isCodeAnnotation = (el) => {
-        for (const clz of el.classList) {
-          if (clz.startsWith('code-annotation-')) {                     
-            return true;
-          }
-        }
-        return false;
-      }
       const clipboard = new window.ClipboardJS('.code-copy-button', {
-        text: function(trigger) {
-          const codeEl = trigger.previousElementSibling.cloneNode(true);
-          for (const childEl of codeEl.children) {
-            if (isCodeAnnotation(childEl)) {
-              childEl.remove();
-            }
-          }
-          return codeEl.innerText;
+        target: function(trigger) {
+          return trigger.previousElementSibling;
         }
       });
       clipboard.on('success', function(e) {
@@ -1870,7 +1989,7 @@ $ edad_years                   &lt;dbl&gt; 85, 30, 30, 27, 54, 24, 21, 24,…</c
           },
           interactive: true,
           interactiveBorder: 10,
-          theme: 'light-border',
+          theme: 'quarto-reveal',
           placement: 'bottom-start'
         };
           config['offset'] = [0,0];

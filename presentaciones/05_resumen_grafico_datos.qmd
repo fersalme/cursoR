@@ -1,6 +1,6 @@
 ---
 title: "Resumen gráfico de datos en R"
-author: "Faiber Chaparro, ALZAK Foundation"
+author: "Faiber Chaparro y Fernando Salcedo, ALZAK Foundation"
 date: 2023-08-19
 format: 
   revealjs :
@@ -286,8 +286,10 @@ ggplot(df_med, aes(x = pbs, fill = tipo_entrega)) +
     stat = "count", 
     # posición de la etiqueta en el centro de cada grupo
     position = position_fill(vjust = 0.5)) +
+  # etiquetas en porcentaje del eje y
+  scale_y_continuous(labels = scales::percent) +
   labs(x = "PBS",
-       y = "Frecuencia",
+       y = "%",
        title = "Dispensaciones por plan de beneficios", 
        fill = "Tipo de entrega") + 
   theme_bw()
@@ -311,6 +313,7 @@ ggplot(df_med, aes(x = pbs, fill = tipo_entrega)) +
     position = position_fill(vjust = 0.5)) +
   # colores de los grupos 
   scale_fill_manual(values = c("darkgreen", "#5DC3DA")) +
+  scale_y_continuous(labels = scales::percent) +
   labs(x = "PBS",
        y = "Frecuencia",
        title = "Dispensaciones por plan de beneficios", 
@@ -410,5 +413,41 @@ ggplot(df_disp, aes(x = mes_disp, y = n)) +
 
 ```
 
+## Guardar un gráfico
+
+- Usamos el comando `ggsave()` para guardar un gráfico
+- O podemos usar la ventana `Plots > Export > Save imagen as`
+
+```{r}
+
+# mi grafico 
+plot_pbs <- ggplot(df_med, aes(x = pbs, fill = tipo_entrega)) +
+  geom_bar(position = "fill") +
+  geom_text(
+    aes(
+      # etiqueta de datos en formato porcentual
+      label = scales::percent(after_stat(count)/sum(after_stat(count)))
+      ),
+    stat = "count", 
+    # posición de la etiqueta en el centro de cada grupo
+    position = position_fill(vjust = 0.5)) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(x = "PBS",
+       y = "%",
+       title = "Dispensaciones por plan de beneficios", 
+       fill = "Tipo de entrega") + 
+  theme_bw()
+
+# guardar
+ggsave(filename = "../resultados/plot_pbs.png", plot_pbs)
+
+```
 
 
+## Guardar un gráfico usando `Plots`
+
+![](src/rstudio-plot.png)
+
+## Guardar un gráfico usando `Plots`
+
+![](src/rstudio-plot-save.png)
